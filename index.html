@@ -864,7 +864,7 @@
         <option value="">-- Select or create --</option>
     </select>
     <input type="text" id="eventNameInput" placeholder="New event name..." />
-    <button class="event-btn event-btn-pink" onclick="try{createEvent()}catch(e){alert('Error: '+e.message)}">Create</button>
+    <button class="event-btn event-btn-pink" onclick="createNewEvent()">Create</button>
     <button class="event-btn event-btn-lime" onclick="exportProgress()">Export CSV</button>
     <button class="event-btn event-btn-danger" id="deleteBtn" onclick="deleteEvent()" style="display:none;">Delete</button>
 </div>
@@ -2101,7 +2101,7 @@ function refreshEventSelect() {
     document.getElementById('deleteBtn').style.display = currentEventId ? '' : 'none';
 }
 
-function createEvent() {
+function createNewEvent(e) {
     const input = document.getElementById('eventNameInput');
     const name = input.value.trim();
     if (!name) { input.focus(); return; }
