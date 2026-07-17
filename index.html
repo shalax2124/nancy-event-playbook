@@ -1847,12 +1847,28 @@ function applyPersonFilter() {
         }
     });
 
-    // Hide empty categories
+    // Hide empty categories and empty phases
     document.querySelectorAll('#tab-checklist .category').forEach(cat => {
+        if (showAll) { cat.style.display = ''; return; }
         const items = cat.querySelectorAll('.checklist li');
-        if (items.length === 0) return;
+        if (items.length === 0) { cat.style.display = 'none'; return; }
         const visibleItems = Array.from(items).filter(li => !li.classList.contains('person-hidden') && !li.classList.contains('nice-hidden'));
-        cat.style.display = visibleItems.length === 0 && !showAll ? 'none' : '';
+        cat.style.display = visibleItems.length === 0 ? 'none' : '';
+    });
+
+    // Hide empty phases (all categories inside are hidden)
+    document.querySelectorAll('#tab-checklist .phase').forEach(phase => {
+        if (showAll) {
+            phase.style.display = '';
+            phase.querySelectorAll('.learning').forEach(l => l.style.display = '');
+            return;
+        }
+        const cats = phase.querySelectorAll('.category');
+        const visibleCats = Array.from(cats).filter(c => c.style.display !== 'none');
+        // Also check for visible learning callouts
+        // Hide learnings when filtering by person
+        phase.querySelectorAll('.learning').forEach(l => l.style.display = 'none');
+        phase.style.display = visibleCats.length === 0 ? 'none' : '';
     });
 }
 
