@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nancy Event Flow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0D0D0D;
+      --surface: #161616;
+      --surface2: #1e1e1e;
+      --border: #2a2a2a;
+      --text: #F9FAFB;
+      --muted: #9ca3af;
+      --pink: #FF2D8A;
+      --lime: #CCFF00;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0 0 60px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      padding: 56px 24px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--pink);
+      margin-bottom: 16px;
+    }
+    .header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    .header p {
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ── FLOW CONTAINER ── */
+    .flow {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* ── STAGE CARD ── */
+    .stage-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stage {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+    .stage:hover {
+      border-color: #3a3a3a;
+    }
+
+    .stage-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .stage-num {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: transparent;
+      border: 2px solid var(--pink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 16px;
+      color: var(--pink);
+      line-height: 1;
+    }
+
+    .stage-title-block { flex: 1; }
+
+    .stage-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .lead-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--pink);
+    }
+    .lead-pill::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--pink);
+      flex-shrink: 0;
+    }
+
+    /* ── BODY GRID ── */
+    .stage-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 24px;
+    }
+    @media (max-width: 600px) {
+      .stage-body { grid-template-columns: 1fr; }
+    }
+
+    .body-block { }
+    .body-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .body-text {
+      color: #d1d5db;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+
+    /* Flow step pill */
+    .flow-steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .flow-step {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 12px;
+      color: #d1d5db;
+    }
+    .flow-step + .flow-step::before {
+      content: none;
+    }
+    .flow-arrow {
+      color: var(--pink);
+      font-size: 11px;
+      margin: 0 2px;
+      align-self: center;
+    }
+    .flow-steps-inline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Output tag */
+    .output-tag {
+      display: inline-block;
+      background: rgba(204, 255, 0, 0.08);
+      border: 1px solid rgba(204, 255, 0, 0.25);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--lime);
+      margin-top: 2px;
+    }
+
+    /* Watch-out banner */
+    .watchout {
+      margin-top: 14px;
+      background: rgba(255, 45, 138, 0.06);
+      border: 1px solid rgba(255, 45, 138, 0.2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12.5px;
+      color: #f9a8d4;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .watchout-icon { flex-shrink: 0; font-size: 13px; margin-top: 1px; }
+
+    /* Top-5 list inside stage */
+    .top5-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .top5-list li {
+      display: flex;
+      gap: 8px;
+      color: #d1d5db;
+      font-size: 13.5px;
+    }
+    .top5-list li .num {
+      color: var(--pink);
+      font-weight: 600;
+      flex-shrink: 0;
+      width: 16px;
+    }
+
+    /* ── CONNECTOR ARROW ── */
+    .connector {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6px 0;
+      gap: 0;
+    }
+    .connector-line {
+      width: 2px;
+      height: 28px;
+      background: linear-gradient(to bottom, var(--border), #3a3a3a);
+    }
+    .connector-arrowhead {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 8px solid #3a3a3a;
+    }
+
+    /* ── TOP 5 RULES ── */
+    .rules-section {
+      max-width: 960px;
+      margin: 48px auto 0;
+      padding: 0 24px;
+    }
+    .rules-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    .rules-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .rules-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text);
+    }
+    .rules-header .line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .rules-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 32px;
+    }
+    @media (max-width: 600px) {
+      .rules-grid { grid-template-columns: 1fr; }
+    }
+    .rule-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .rule-num {
+      flex-shrink: 0;
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: var(--pink);
+      line-height: 1;
+      opacity: 0.5;
+      width: 28px;
+    }
+    .rule-text {
+      font-size: 13.5px;
+      color: #d1d5db;
+      padding-top: 4px;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      padding: 0 24px;
+      color: #4b5563;
+      font-size: 12px;
+    }
+
+    /* Tag for "span full" body blocks */
+    .full-width { grid-column: 1 / -1; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-label">Hello Nancy</div>
+    <h1>Nancy Event Flow</h1>
+    <p>From concept to content — how our events come together</p>
+  </header>
+
+  <!-- FLOW -->
+  <div class="flow">
+
+    <!-- STAGE 1 -->
+    <div class="stage-wrap">
+      <div class="stage">
+        <div class="stage-header">
+          <div class="stage-num">1</div>
+          <div class="stage-title-block">
+            <div class="stage-title">Concept</div>
+            <div class="lead-pill">Lead: Crystal</div>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="body-block">
+            <div class="body-label">What happens</div>
+            <div class="body-text">Crystal develops the event concept, mood, and creative direction.</div>
+          </div>
+          <div class="body-block">
+            <div class="body-label">Then</div>
+            <div class="body-text">Present to Momo &amp; Rahul for brainstorm and sign-off.</div>
+          </div>
+          <div class="body-block full-width">
+            <div class="body-label">Key output</div>
+            <div>
+              <span class="output-tag">Event brief</span>
+              <span class="output-tag" style="margin-left:6px;">Creative direction doc</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="connector-line"></div><div class="connector-arrowhead"></div></div>
+
+    <!-- STAGE 2 -->
+    <div class="stage-wrap">
+      <div class="stage">
+        <div class="stage-header">
+          <div class="stage-num">2</div>
+          <div class="stage-title-block">
+            <div class="stage-title">Lock Dates &amp; Budget</div>
+            <div class="lead-pill">Lead: Momo</div>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="body-block">
+            <div class="body-label">What happens</div>
+            <div class="body-text">Confirm dates, venue, and budget ceiling.</div>
+          </div>
+          <div class="body-block">
+            <div class="body-label">Depends on</div>
+            <div class="body-text">Concept approved by Momo &amp; Rahul.</div>
+          </div>
+          <div class="body-block full-width">
+            <div class="body-label">Key output</div>
+            <div>
+              <span class="output-tag">Confirmed dates</span>
+              <span class="output-tag" style="margin-left:6px;">Approved budget</span>
+              <span class="output-tag" style="margin-left:6px;">Venue signed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="connector-line"></div><div class="connector-arrowhead"></div></div>
+
+    <!-- STAGE 3 -->
+    <div class="stage-wrap">
+      <div class="stage">
+        <div class="stage-header">
+          <div class="stage-num">3</div>
+          <div class="stage-title-block">
+            <div class="stage-title">The Invite</div>
+            <div class="lead-pill">Lead: Crystal (design) &middot; Dione (info collection)</div>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="body-block full-width">
+            <div class="body-label">Info needed before design starts</div>
+            <div class="body-text">Event name &middot; Date &middot; Time &middot; Venue address &middot; Dress code &middot; RSVP method &middot; Dietary collection &middot; Tier list (VIP / General / Press)</div>
+          </div>
+          <div class="body-block full-width">
+            <div class="body-label">Flow</div>
+            <div class="flow-steps-inline">
+              <span class="flow-step">Collect info</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-step">Crystal designs by tier</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-step">Send invites</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-step">Track RSVPs</span>
+            </div>
+          </div>
+          <div class="body-block full-width">
+            <div class="body-label">Key output</div>
+            <div>
+              <span class="output-tag">Invites sent</span>
+              <span class="output-tag" style="margin-left:6px;">RSVP tracker live</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="connector-line"></div><div class="connector-arrowhead"></div></div>
+
+    <!-- STAGE 4 -->
+    <div class="stage-wrap">
+      <div class="stage">
+        <div class="stage-header">
+          <div class="stage-num">4</div>
+          <div class="stage-title-block">
+            <div class="stage-title">Merch &amp; Gift Bags</div>
+            <div class="lead-pill">Lead: Crystal (selects) &middot; Andrea (executes)</div>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="body-block full-width">
+            <div class="body-label">Flow</div>
+            <div class="flow-steps-inline">
+              <span class="flow-step">Pick default merch from catalog</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-step">Confirm quantities per tier (A / B / C)</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-step">Factory packing</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-step">Ship to venue</span>
+            </div>
+          </div>
+          <div class="body-block full-width">
+            <div class="body-label">Key output</div>
+            <span class="output-tag">Gift bags packed and shipped</span>
+          </div>
+        </div>
+        <div class="watchout">
+          <span class="watchout-icon">&#9888;</span>
+          <span>Ship date must be realistic — allow packing time + sea freight (2–3 weeks). Never hand-carry merch to the event.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="connector-line"></div><div class="connector-arrowhead"></div></div>
+
+    <!-- STAGE 5 -->
+    <div class="stage-wrap">
+      <div class="stage">
+        <div class="stage-header">
+          <div class="stage-num">5</div>
+          <div class="stage-title-block">
+            <div class="stage-title">Vendors &amp; Production</div>
+            <div class="lead-pill">Lead: Rachana / Britt (logistics) &middot; Crystal (creative vendors)</div>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="body-block">
+            <div class="body-label">What happens</div>
+            <div class="body-text">Lock F&amp;B, furniture, signage, AV, and print. One decision-maker per category — no committee.</div>
+          </div>
+          <div class="body-block">
+            <div class="body-label">Key milestone</div>
+            <div class="body-text">Design freeze passed. No changes after this point without sign-off.</div>
+          </div>
+          <div class="body-block full-width">
+            <div class="body-label">Key output</div>
+            <div>
+              <span class="output-tag">All vendors confirmed</span>
+              <span class="output-tag" style="margin-left:6px;">Print in production</span>
+              <span class="output-tag" style="margin-left:6px;">Design freeze passed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="connector-line"></div><div class="connector-arrowhead"></div></div>
+
+    <!-- STAGE 6 -->
+    <div class="stage-wrap">
+      <div class="stage">
+        <div class="stage-header">
+          <div class="stage-num">6</div>
+          <div class="stage-title-block">
+            <div class="stage-title">Event Day</div>
+            <div class="lead-pill">Lead: Momo (ops) &middot; Crystal (creative)</div>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="body-block">
+            <div class="body-label">Phases</div>
+            <div class="flow-steps-inline">
+              <span class="flow-step">Setup</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-step">Run</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-step">Teardown</span>
+            </div>
+          </div>
+          <div class="body-block">
+            <div class="body-label">&nbsp;</div>
+          </div>
+          <div class="body-block full-width">
+            <div class="body-label">Top 5 on the day</div>
+            <ul class="top5-list">
+              <li><span class="num">1.</span><span>Walk the floor plan before doors open</span></li>
+              <li><span class="num">2.</span><span>10-min team huddle — roles, schedule, escalation path</span></li>
+              <li><span class="num">3.</span><span>ONE person handles real-time approvals</span></li>
+              <li><span class="num">4.</span><span>Content team filming per shot list</span></li>
+              <li><span class="num">5.</span><span>Collect ALL raw footage onto shared drive before leaving</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="connector"><div class="connector-line"></div><div class="connector-arrowhead"></div></div>
+
+    <!-- STAGE 7 -->
+    <div class="stage-wrap">
+      <div class="stage">
+        <div class="stage-header">
+          <div class="stage-num">7</div>
+          <div class="stage-title-block">
+            <div class="stage-title">Post-Event</div>
+            <div class="lead-pill">Lead: Crystal (content direction) &middot; Dione (execution)</div>
+          </div>
+        </div>
+        <div class="stage-body">
+          <div class="body-block full-width">
+            <div class="body-label">Flow</div>
+            <div class="flow-steps-inline">
+              <span class="flow-step">Raw footage uploaded (24hr)</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-step">Editor briefed</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-step">Content rollout 2–4 weeks</span>
+              <span class="flow-arrow">→</span>
+              <span class="flow-step">Invoices closed (1 week)</span>
+            </div>
+          </div>
+          <div class="body-block">
+            <div class="body-label">Note on content</div>
+            <div class="body-text">Roll out over 2–4 weeks — not all at once. Brief editors with references and "what good looks like."</div>
+          </div>
+          <div class="body-block">
+            <div class="body-label">Key output</div>
+            <div>
+              <span class="output-tag">Content calendar live</span>
+              <span class="output-tag" style="margin-left:6px;">Budget reconciled</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- end .flow -->
+
+  <!-- TOP 5 RULES -->
+  <div class="rules-section">
+    <div class="rules-card">
+      <div class="rules-header">
+        <h2>Top 5 Rules</h2>
+        <div class="line"></div>
+      </div>
+      <div class="rules-grid">
+        <div class="rule-item">
+          <div class="rule-num">1</div>
+          <div class="rule-text">One decision-maker per category — not a committee</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-num">2</div>
+          <div class="rule-text">Design freeze is sacred — no changes without explicit sign-off</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-num">3</div>
+          <div class="rule-text">Ship merch early — never hand-carry to the event</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-num">4</div>
+          <div class="rule-text">Brief editors with references and a clear picture of what good looks like</div>
+        </div>
+        <div class="rule-item" style="grid-column: 1 / -1;">
+          <div class="rule-num">5</div>
+          <div class="rule-text">Schedule changes communicated to all affected parties within 24 hours</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Built from team debriefs &mdash; Miami, London, US Event Prep</p>
+  </div>
+
+</body>
+</html>
