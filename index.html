@@ -937,17 +937,21 @@
 
 <div class="person-filter-bar">
     <p>Filter by team or person &mdash; show only their items.</p>
-    <div class="person-pills">
+    <div style="display:flex; justify-content:center; gap:8px; margin-bottom:12px;">
         <div class="person-pill active" data-person="all" onclick="togglePersonFilter(this)">All</div>
         <div class="person-pill" data-person="Creative" onclick="togglePersonFilter(this)" style="border-color:#FF2D8A; color:#FF2D8A;">Creative Team</div>
         <div class="person-pill" data-person="Ops" onclick="togglePersonFilter(this)" style="border-color:#CCFF00; color:#CCFF00;">Ops Team</div>
         <div class="person-pill" data-person="Founders" onclick="togglePersonFilter(this)" style="border-color:#6B7280; color:#6B7280;">Founders</div>
+    </div>
+    <div class="person-pills">
         <div class="person-pill" data-person="Crystal" onclick="togglePersonFilter(this)">Crystal</div>
         <div class="person-pill" data-person="Britt" onclick="togglePersonFilter(this)">Britt</div>
         <div class="person-pill" data-person="Dione" onclick="togglePersonFilter(this)">Dione</div>
+        <span style="color:#374151; margin:0 4px;">|</span>
         <div class="person-pill" data-person="Andrea" onclick="togglePersonFilter(this)">Andrea</div>
-        <div class="person-pill" data-person="Momo" onclick="togglePersonFilter(this)">Momo</div>
         <div class="person-pill" data-person="Rachana" onclick="togglePersonFilter(this)">Rachana</div>
+        <span style="color:#374151; margin:0 4px;">|</span>
+        <div class="person-pill" data-person="Momo" onclick="togglePersonFilter(this)">Momo</div>
         <div class="person-pill" data-person="Rahul" onclick="togglePersonFilter(this)">Rahul</div>
     </div>
 </div>
