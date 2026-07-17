@@ -1825,12 +1825,6 @@ function applyPersonFilter() {
     const showAll = activePersons.size === 0;
 
     document.querySelectorAll('#tab-checklist .checklist li').forEach(li => {
-        // Risk items always show
-        if (li.classList.contains('has-risk')) {
-            li.classList.remove('person-hidden');
-            return;
-        }
-
         if (showAll) {
             li.classList.remove('person-hidden');
             return;
