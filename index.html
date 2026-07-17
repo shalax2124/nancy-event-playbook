@@ -936,7 +936,7 @@
 </div>
 
 <div class="person-filter-bar">
-    <p>Filter by person &mdash; show only their items. Risk items always visible. Items with no owner always show.</p>
+    <p>Filter by person &mdash; show only their items.</p>
     <div class="person-pills">
         <div class="person-pill active" data-person="all" onclick="togglePersonFilter(this)">All</div>
         <div class="person-pill" data-person="Crystal" onclick="togglePersonFilter(this)">Crystal</div>
@@ -1846,6 +1846,14 @@ function applyPersonFilter() {
             li.classList.add('person-hidden');
         }
     });
+
+    // Hide empty categories
+    document.querySelectorAll('#tab-checklist .category').forEach(cat => {
+        const items = cat.querySelectorAll('.checklist li');
+        if (items.length === 0) return;
+        const visibleItems = Array.from(items).filter(li => !li.classList.contains('person-hidden') && !li.classList.contains('nice-hidden'));
+        cat.style.display = visibleItems.length === 0 && !showAll ? 'none' : '';
+    });
 }
 
 // ========== NICE-TO-HAVE TOGGLE (USER-DRIVEN) ==========
@@ -1929,7 +1937,7 @@ function updateNiceCount() {
     const total = countNiceItems();
     const countEl = document.getElementById('niceCount');
     if (total === 0) {
-        countEl.textContent = '(right-click any item to mark optional)';
+        countEl.textContent = '(hover any item and click \u22EE to mark optional)';
     } else if (niceVisible) {
         countEl.textContent = '(' + total + ' optional shown)';
     } else {
