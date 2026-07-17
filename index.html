@@ -1,0 +1,2701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nancy Event Playbook</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --lime: #CCFF00;
+            --pink: #FF2D8A;
+            --pink-light: #FF6DB3;
+            --black: #0D0D0D;
+            --white: #FFFFFF;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-500: #6B7280;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --green: #22C55E;
+            --amber: #F59E0B;
+            --red: #EF4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--white);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* TOP BANNER */
+        .top-banner {
+            background: var(--black);
+            color: var(--white);
+            text-align: center;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* HERO */
+        .hero {
+            background: var(--lime);
+            padding: 60px 24px 48px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2.4rem, 6vw, 3.6rem);
+            font-weight: 400;
+            color: var(--black);
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+        .hero h1 span { color: var(--pink); }
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--gray-700);
+            max-width: 600px;
+            margin: 16px auto 28px;
+        }
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+        .hero-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        .hero-badge .check {
+            width: 20px;
+            height: 20px;
+            background: var(--green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        /* MODULE SELECTOR */
+        .module-selector {
+            background: var(--black);
+            padding: 32px 24px;
+            text-align: center;
+        }
+        .module-selector h2 {
+            font-family: 'DM Serif Display', serif;
+            color: var(--white);
+            font-size: 1.4rem;
+            font-weight: 400;
+            margin-bottom: 6px;
+        }
+        .module-selector p {
+            color: var(--gray-500);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+        .module-pills {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .module-pill {
+            background: transparent;
+            border: 1.5px solid var(--gray-500);
+            color: var(--gray-300);
+            padding: 8px 18px;
+            border-radius: 100px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .module-pill:hover {
+            border-color: var(--pink);
+            color: var(--pink);
+        }
+        .module-pill.active {
+            background: var(--pink);
+            border-color: var(--pink);
+            color: var(--white);
+        }
+
+        /* PERSON FILTER BAR */
+        .person-filter-bar {
+            background: var(--black);
+            padding: 0 24px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .person-filter-bar p {
+            color: var(--gray-500);
+            font-size: 0.78rem;
+            margin-bottom: 10px;
+        }
+        .person-pills {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .person-pill {
+            background: transparent;
+            border: 1.5px solid var(--gray-500);
+            color: var(--gray-300);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .person-pill:hover {
+            border-color: var(--lime);
+            color: var(--lime);
+        }
+        .person-pill.active {
+            background: var(--lime);
+            border-color: var(--lime);
+            color: var(--black);
+        }
+
+        /* NICE-TO-HAVE TOGGLE BAR */
+        .nice-toggle-bar {
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .nice-toggle-btn {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 100px;
+            border: 1.5px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .nice-toggle-btn:hover {
+            border-color: var(--pink);
+            color: var(--pink);
+        }
+        .nice-toggle-btn.active {
+            background: var(--black);
+            border-color: var(--black);
+            color: var(--lime);
+        }
+        .nice-count {
+            font-size: 0.78rem;
+            color: var(--gray-500);
+        }
+
+        /* TAB SYSTEM */
+        .tab-bar {
+            background: var(--white);
+            border-bottom: 2px solid var(--gray-200);
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            padding: 0 24px;
+        }
+        .tab-btn {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 14px 32px;
+            border: none;
+            background: transparent;
+            color: var(--gray-500);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover { color: var(--pink); }
+        .tab-btn.active {
+            color: var(--pink);
+            border-bottom-color: var(--pink);
+        }
+
+        /* TAB CONTENT */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* PHASE SECTIONS */
+        .phase {
+            padding: 48px 0 32px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .phase:last-of-type { border-bottom: none; }
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .phase-tag {
+            background: var(--pink);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 4px 12px;
+            border-radius: 100px;
+            white-space: nowrap;
+        }
+        .phase-tag.module-tag {
+            background: var(--black);
+        }
+        .phase-header h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: var(--black);
+        }
+
+        /* CATEGORY CARDS */
+        .category {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        .category h3 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--pink);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 16px;
+        }
+        .category.module-only {
+            border-color: var(--gray-300);
+            border-style: dashed;
+            display: none;
+        }
+        .category.module-only.visible { display: block; }
+        .category.module-only h3 { color: var(--black); }
+
+        /* CHECKLIST */
+        .checklist { list-style: none; }
+        .checklist li {
+            padding: 10px 0 10px 32px;
+            position: relative;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            cursor: default;
+        }
+        .checklist li:last-child { border-bottom: none; }
+        .checklist li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--gray-300);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .checklist li.checked::before {
+            background: var(--green);
+            border-color: var(--green);
+        }
+        .checklist li.checked::after {
+            content: '\2713';
+            position: absolute;
+            left: 3px;
+            top: 12px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .checklist li.checked { color: var(--gray-500); text-decoration: line-through; }
+
+        /* RISK border */
+        .checklist li.has-risk {
+            border-left: 3px solid #FF2D8A;
+            padding-left: 29px;
+        }
+
+        /* Hidden items */
+        .checklist li.person-hidden { display: none; }
+        .checklist li.nice-hidden { display: none; }
+
+        .owner {
+            display: inline-block;
+            background: var(--lime);
+            color: var(--black);
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 100px;
+            margin-left: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .risk {
+            display: inline-block;
+            background: #FEE2E2;
+            color: var(--red);
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 100px;
+            margin-left: 6px;
+            text-transform: uppercase;
+        }
+        .deadline {
+            display: inline-block;
+            background: #FEF3C7;
+            color: #B45309;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 100px;
+            margin-left: 6px;
+            text-transform: uppercase;
+        }
+
+        /* NOTE — collapsed by default, toggled by clicking item text */
+        .note {
+            display: none;
+            color: var(--gray-500);
+            font-size: 0.8rem;
+            margin-top: 6px;
+            padding-left: 2px;
+            line-height: 1.5;
+        }
+        .note.expanded { display: block; }
+
+        /* Note indicator */
+        .note-indicator {
+            display: inline-block;
+            font-size: 0.75rem;
+            margin-left: 6px;
+            cursor: pointer;
+            user-select: none;
+            color: var(--gray-500);
+            transition: color 0.15s;
+        }
+        .note-indicator:hover { color: var(--pink); }
+
+        /* Clickable text area for note toggle */
+        .item-text {
+            cursor: pointer;
+        }
+        .item-text:hover { color: var(--black); }
+
+        /* LEARNING CALLOUT */
+        .learning {
+            background: #FFFBEB;
+            border-left: 4px solid var(--amber);
+            padding: 16px 20px;
+            margin-top: 16px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.82rem;
+            color: var(--gray-700);
+        }
+        .learning strong { color: #B45309; }
+
+        /* SECTION DIVIDER */
+        .section-divider {
+            background: var(--lime);
+            text-align: center;
+            padding: 24px;
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.2rem;
+            color: var(--black);
+        }
+
+        /* TEMPLATES SECTION */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .template-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .template-card:hover {
+            border-color: var(--pink);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 45, 138, 0.1);
+        }
+        .template-card h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .template-card h4 .dl-icon {
+            font-size: 0.7rem;
+            background: var(--lime);
+            color: var(--black);
+            padding: 2px 8px;
+            border-radius: 100px;
+            font-weight: 700;
+        }
+        .template-card p {
+            font-size: 0.78rem;
+            color: var(--gray-500);
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--black);
+            color: var(--gray-500);
+            text-align: center;
+            padding: 32px 24px;
+            font-size: 0.8rem;
+        }
+        footer strong { color: var(--pink); }
+
+        /* PROGRESS BAR */
+        .progress-bar-container {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--gray-200);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--pink);
+            border-radius: 100px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gray-500);
+            white-space: nowrap;
+        }
+
+        /* EVENT MANAGER BAR */
+        .event-bar {
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .event-bar label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .event-bar select, .event-bar input {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border: 1.5px solid var(--gray-300);
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--gray-900);
+            outline: none;
+        }
+        .event-bar select:focus, .event-bar input:focus {
+            border-color: var(--pink);
+        }
+        .event-bar input { width: 220px; }
+        .event-bar select { min-width: 200px; }
+        .event-btn {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 100px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .event-btn-pink {
+            background: var(--pink);
+            color: var(--white);
+        }
+        .event-btn-pink:hover { background: #e0246f; }
+        .event-btn-lime {
+            background: var(--lime);
+            color: var(--black);
+        }
+        .event-btn-lime:hover { background: #b8e600; }
+        .event-btn-outline {
+            background: transparent;
+            color: var(--gray-500);
+            border: 1.5px solid var(--gray-300);
+        }
+        .event-btn-outline:hover { border-color: var(--pink); color: var(--pink); }
+        .event-btn-danger {
+            background: transparent;
+            color: var(--red);
+            border: 1.5px solid #FCA5A5;
+        }
+        .event-btn-danger:hover { background: #FEE2E2; }
+        .saved-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--black);
+            color: var(--lime);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 200;
+        }
+        .saved-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* HOW TO USE */
+        .how-to {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .how-to-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--pink);
+        }
+        .how-to-toggle:hover { background: var(--gray-50); }
+        .how-to-toggle .arrow { transition: transform 0.2s; }
+        .how-to-toggle.open .arrow { transform: rotate(180deg); }
+        .how-to-content {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px 32px;
+        }
+        .how-to-content.open { display: block; }
+        .how-to-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .how-to-step {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .how-to-step .step-num {
+            display: inline-block;
+            background: var(--pink);
+            color: var(--white);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 24px;
+            margin-bottom: 8px;
+        }
+        .how-to-step h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .how-to-step p {
+            font-size: 0.78rem;
+            color: var(--gray-500);
+            line-height: 1.5;
+        }
+        .how-to-tip {
+            background: #FFFBEB;
+            border: 1px solid #FDE68A;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.8rem;
+            color: var(--gray-700);
+        }
+        .how-to-tip strong { color: #B45309; }
+
+        /* JUMP NAV */
+        .jump-nav {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 16px 24px;
+            flex-wrap: wrap;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 31px;
+            z-index: 99;
+        }
+        .jump-btn {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 100px;
+            border: 1.5px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .jump-btn:hover {
+            border-color: var(--pink);
+            color: var(--pink);
+        }
+        .jump-btn.active-phase {
+            background: var(--pink);
+            border-color: var(--pink);
+            color: var(--white);
+        }
+
+        /* MODULE TAG on items */
+        .module-tag-inline {
+            display: inline-block;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 3px;
+            margin-left: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            background: rgba(13, 13, 13, 0.08);
+            color: var(--gray-500);
+            border: 1px solid var(--gray-300);
+        }
+
+        /* TEMPLATE LINK INSIDE CATEGORIES */
+        .cat-template-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            float: right;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--pink);
+            text-transform: none;
+            letter-spacing: 0;
+            cursor: pointer;
+            padding: 2px 10px;
+            border: 1px solid rgba(255, 45, 138, 0.3);
+            border-radius: 100px;
+            background: rgba(255, 45, 138, 0.05);
+            transition: all 0.2s;
+        }
+        .cat-template-link:hover {
+            background: rgba(255, 45, 138, 0.1);
+            border-color: var(--pink);
+        }
+
+        /* NICE-TO-HAVE USER TAG */
+        .nice-tag {
+            display: inline-block;
+            background: var(--gray-200);
+            color: var(--gray-500);
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 100px;
+            margin-left: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        /* CUSTOM CONTEXT MENU */
+        .custom-context-menu {
+            position: absolute;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            z-index: 9999;
+            min-width: 200px;
+            overflow: hidden;
+            font-size: 0.82rem;
+        }
+        .custom-context-menu button {
+            display: block;
+            width: 100%;
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            color: var(--gray-700);
+            transition: background 0.15s;
+        }
+        .custom-context-menu button:hover {
+            background: var(--gray-50);
+            color: var(--black);
+        }
+        .custom-context-menu button.mark-nice { color: var(--gray-500); }
+        .custom-context-menu button.mark-must { color: var(--pink); font-weight: 600; }
+
+        /* TIER BUTTON on each item */
+        .tier-btn {
+            position: absolute;
+            right: 8px;
+            top: 10px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-500);
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.15s;
+            z-index: 5;
+        }
+        .checklist li:hover .tier-btn { opacity: 1; }
+        .checklist li .tier-btn.visible { opacity: 1; }
+        .nice-tag { margin-left: 6px; }
+
+        @media (max-width: 600px) {
+            .hero { padding: 40px 16px 32px; }
+            .hero h1 { font-size: 2rem; }
+            .hero-badges { flex-direction: column; align-items: center; }
+            .module-pills { gap: 6px; }
+            .module-pill { font-size: 0.75rem; padding: 6px 12px; }
+            .category { padding: 16px; }
+            .templates-grid { grid-template-columns: 1fr; }
+            .how-to-steps { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-banner">
+    Nancy Event Playbook &mdash; Built from Miami + London learnings
+</div>
+
+<div class="progress-bar-container">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-text" id="progressText">0 / 0 items</div>
+</div>
+
+<div class="event-bar" id="eventBar">
+    <label>Event:</label>
+    <select id="eventSelect" onchange="loadEvent(this.value)">
+        <option value="">-- Select or create --</option>
+    </select>
+    <input type="text" id="eventNameInput" placeholder="New event name..." />
+    <button class="event-btn event-btn-pink" onclick="createEvent()">Create</button>
+    <button class="event-btn event-btn-lime" onclick="exportProgress()">Export CSV</button>
+    <button class="event-btn event-btn-danger" id="deleteBtn" onclick="deleteEvent()" style="display:none;">Delete</button>
+</div>
+<div class="saved-toast" id="savedToast">Saved</div>
+
+<div class="hero">
+    <h1>Plan it. <span>Run it.</span><br>Never wing it.</h1>
+    <p>Your end-to-end event checklist. Universal core items apply to every event. Toggle modules for event-specific tasks.</p>
+    <div class="hero-badges">
+        <div class="hero-badge"><div class="check">&#10003;</div> Universal core always on</div>
+        <div class="hero-badge"><div class="check">&#10003;</div> Toggle event-type modules</div>
+        <div class="hero-badge"><div class="check">&#10003;</div> Built from real event data</div>
+    </div>
+</div>
+
+<div class="how-to">
+    <div class="how-to-toggle" onclick="this.classList.toggle('open'); document.getElementById('howToContent').classList.toggle('open');">
+        How to use this playbook <span class="arrow">&#9660;</span>
+    </div>
+    <div class="how-to-content" id="howToContent">
+        <div class="how-to-steps">
+            <div class="how-to-step">
+                <span class="step-num">1</span>
+                <h4>Create your event</h4>
+                <p>Type your event name in the bar at the top (e.g., "US Launch Aug 2026") and click <strong>Create</strong>. This starts a fresh checklist.</p>
+            </div>
+            <div class="how-to-step">
+                <span class="step-num">2</span>
+                <h4>Select event type(s)</h4>
+                <p>Toggle the module pills below (Dinner, Booth, Launch, etc.). Event-specific items appear inside each phase alongside the universal items.</p>
+            </div>
+            <div class="how-to-step">
+                <span class="step-num">3</span>
+                <h4>Check items as you go</h4>
+                <p>Click the checkbox (left side) to mark done. Click the item text to expand notes. Progress auto-saves after every click.</p>
+            </div>
+            <div class="how-to-step">
+                <span class="step-num">4</span>
+                <h4>Filter by person</h4>
+                <p>Use the person pills to show only one person's items. Useful during standups or when handing off to a specific team member.</p>
+            </div>
+            <div class="how-to-step">
+                <span class="step-num">5</span>
+                <h4>Switch between events</h4>
+                <p>Use the dropdown to load a different event. Each event remembers its own checked items and active modules.</p>
+            </div>
+            <div class="how-to-step">
+                <span class="step-num">6</span>
+                <h4>Export progress</h4>
+                <p>Click <strong>Export CSV</strong> to download a snapshot with Done/Not Done status. Open in Google Sheets (File &gt; Import &gt; Upload) to share with the team.</p>
+            </div>
+        </div>
+        <div class="how-to-tip">
+            <strong>Note:</strong> Progress saves to your browser (localStorage). If you switch devices or browsers, use <strong>Export CSV</strong> to take your progress with you. Items tagged <span style="background:#FEE2E2; color:#EF4444; padding:1px 6px; border-radius:4px; font-size:0.75rem; font-weight:600;">Risk</span> are where past Nancy events broke down &mdash; they have a pink left border and are always visible regardless of filters.
+        </div>
+    </div>
+</div>
+
+<div class="module-selector">
+    <h2>What type of event?</h2>
+    <p>Select all that apply. Module-specific items will appear inside each phase.</p>
+    <div class="module-pills">
+        <div class="module-pill" data-module="popup" onclick="toggleModule(this)">Pop-Up / Street</div>
+        <div class="module-pill" data-module="booth" onclick="toggleModule(this)">Trade Show / Booth</div>
+        <div class="module-pill" data-module="dinner" onclick="toggleModule(this)">Intimate Dinner</div>
+        <div class="module-pill" data-module="launch" onclick="toggleModule(this)">Launch Party</div>
+        <div class="module-pill" data-module="multiday" onclick="toggleModule(this)">Multi-Day</div>
+    </div>
+</div>
+
+<div class="person-filter-bar">
+    <p>Filter by person &mdash; show only their items. Risk items always visible. Items with no owner always show.</p>
+    <div class="person-pills">
+        <div class="person-pill active" data-person="all" onclick="togglePersonFilter(this)">All</div>
+        <div class="person-pill" data-person="Crystal" onclick="togglePersonFilter(this)">Crystal</div>
+        <div class="person-pill" data-person="Dione" onclick="togglePersonFilter(this)">Dione</div>
+        <div class="person-pill" data-person="Andrea" onclick="togglePersonFilter(this)">Andrea</div>
+        <div class="person-pill" data-person="Momo" onclick="togglePersonFilter(this)">Momo</div>
+        <div class="person-pill" data-person="Rachana" onclick="togglePersonFilter(this)">Rachana</div>
+        <div class="person-pill" data-person="Britt" onclick="togglePersonFilter(this)">Britt</div>
+        <div class="person-pill" data-person="Rahul" onclick="togglePersonFilter(this)">Rahul</div>
+    </div>
+</div>
+
+<!-- TAB BUTTONS -->
+<div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('checklist', this)">Checklist</button>
+    <button class="tab-btn" onclick="switchTab('reference', this)">Playbook Reference</button>
+</div>
+
+<!-- NICE-TO-HAVE TOGGLE (only shown in checklist tab) -->
+<div class="nice-toggle-bar" id="niceToggleBar">
+    <button class="nice-toggle-btn" id="niceToggleBtn" onclick="toggleNiceToHaves()">Show nice-to-haves</button>
+    <span class="nice-count" id="niceCount"></span>
+</div>
+
+<!-- CHECKLIST TAB JUMP NAV -->
+<div class="jump-nav" id="jumpNavChecklist">
+    <button class="jump-btn" onclick="jumpTo('phase1')">4+ Weeks</button>
+    <button class="jump-btn" onclick="jumpTo('phase2')">2-3 Weeks</button>
+    <button class="jump-btn" onclick="jumpTo('phase3')">1 Week</button>
+    <button class="jump-btn" onclick="jumpTo('phase4')">48 Hours</button>
+    <button class="jump-btn" onclick="jumpTo('phase5')">Day Of</button>
+    <button class="jump-btn" onclick="jumpTo('phase6')">Post-Event</button>
+    <button class="jump-btn" onclick="jumpTo('phaseTemplates')">Templates</button>
+</div>
+
+<!-- REFERENCE TAB JUMP NAV -->
+<div class="jump-nav" id="jumpNavReference" style="display:none;">
+    <button class="jump-btn" onclick="jumpTo('phaseRules')">Rules</button>
+    <button class="jump-btn" onclick="jumpTo('phaseAuthority')">Authority</button>
+    <button class="jump-btn" onclick="jumpTo('phaseQuestions')" style="border-color:#FDA4AF; color:#BE123C;">Decisions</button>
+</div>
+
+
+<!-- ===== CHECKLIST TAB ===== -->
+<div class="tab-content active" id="tab-checklist">
+<div class="container">
+
+    <!-- ========== PHASE 1 ========== -->
+    <div class="phase" id="phase1">
+        <div class="phase-header">
+            <span class="phase-tag">4+ Weeks Out</span>
+            <h2>Strategy &amp; Foundations</h2>
+        </div>
+
+        <div class="category">
+            <h3>Event Concept &amp; Objectives <span class="cat-template-link" onclick="event.stopPropagation(); downloadTemplate('master-event-brief')">Download Brief Template</span></h3>
+            <ul class="checklist">
+                <li data-owners="Rahul Momo"><span class="item-text">Define primary objective (brand awareness, content capture, sales, partnerships, press) <span class="owner">Rahul / Momo</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Confirm event type and format <span class="owner">Momo</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Set target audience + expected attendance numbers <span class="owner">Rachana</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Define success metrics (content pieces, sign-ups, press hits, engagement) <span class="owner">Momo</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Confirm dates, duration, and timezone considerations for remote team <span class="owner">Momo</span></span></li>
+                <li class="has-risk" data-owners="Momo"><span class="item-text">Assign ONE decision-maker per workstream (not committee) <span class="owner">Momo</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">Past: vendor decisions needed 4 people on WA. Assign one decider per category.</span></span></li>
+                <li class="has-risk" data-owners="Crystal"><span class="item-text">Create master event brief (single source of truth) <span class="owner">Crystal</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">Crystal leads. Dione supports (rendering, research, logistics). Past: no central doc. Decisions scattered across 3 WA groups and got lost.</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Fill Creative Direction Brief (brand mood, references, approval rules) <span class="owner">Crystal</span> <span class="note-indicator">&#9658;</span><span class="note">One doc per event. Once Crystal fills + approves: Dione can run with the established direction without checking every decision. <a href="https://docs.google.com/spreadsheets/d/11bydOZG18z9VSszN5K3Hk7LGNhobfpIrn4Af_cbNlf0/edit" target="_blank" style="color:var(--pink);">Open template</a></span></span></li>
+                <li data-owners="Momo"><span class="item-text">Set key milestone dates (design freeze, vendor lock, print deadline) <span class="owner">Momo</span></span></li>
+                <li class="has-risk" data-owners="Momo Crystal"><span class="item-text">Review previous event retro before kickoff <span class="owner">Momo / Crystal</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">Don't rebuild from scratch. Check what broke last time and verify those items are addressed in this event's plan. US event: team repeated London mistakes (last-minute packing, unclear vendor comms) because no retro was referenced.</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Venue &amp; Location</h3>
+            <ul class="checklist">
+                <li class="has-risk" data-owners="Rachana Britt"><span class="item-text">Shortlist venues and confirm brand-fit <span class="owner">Rachana / Britt</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">London: venue almost cancelled citing "immoral" products. Disclose brand category upfront.</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Review contracts for morality/cancellation clauses <span class="owner">Momo</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Confirm venue capacity and fire regulations <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana Britt"><span class="item-text">Get floor plan with dimensions <span class="owner">Rachana / Britt</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Confirm load-in/load-out times (negotiate if short) <span class="owner">Rachana</span> <span class="note-indicator">&#9658;</span><span class="note">London: florist needed 2hrs, venue gave 1hr. Negotiate before signing.</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Check: power, WiFi, AV, sound restrictions, parking, loading bay <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Confirm storage on-site or nearby <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Get venue furniture catalogue <span class="owner">Rachana</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Sign contract and pay deposit <span class="owner">Momo</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Budget &amp; Finance <a class="cat-template-link" href="https://docs.google.com/spreadsheets/d/1nfnJSKTT6aDQMsExG4qu6QpNJLFaCykBOvfO1RzS8AM/edit" target="_blank" onclick="event.stopPropagation()">Open Budget Sheet</a></h3>
+            <ul class="checklist">
+                <li data-owners="Andrea"><span class="item-text">Create budget spreadsheet with line items per category <span class="owner">Andrea</span> <span class="note-indicator">&#9658;</span><span class="note">Include currency column per line item. Nancy events typically use USD/GBP/HKD. Set one base currency for totals and track conversion rates.</span></span></li>
+                <li class="has-risk" data-owners="Momo Rachana"><span class="item-text">Set spending authority per person <span class="owner">Momo / Rachana</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">London: 1K sofa needed Pleo auth at 11pm, 2-min window. Define tiers clearly.</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Set up payment method for on-ground team (card holder must be in event timezone) <span class="owner">Rachana</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Brief finance team on event dates for real-time approvals <span class="owner">Andrea</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Distribute invoice template to all vendors <span class="owner">Andrea</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Pre-authorize expected large expenses <span class="owner">Momo</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Team &amp; Roles</h3>
+            <ul class="checklist">
+                <li class="has-risk" data-owners="Momo"><span class="item-text">Define event org chart with workstream owners <span class="owner">Momo</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">"Expectations confusing on what's the role of people." Every person must know their lane.</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Assign workstream leads (Creative, Logistics, Content, Talent, Finance, PR) <span class="owner">Momo</span></span></li>
+                <li data-owners="Rachana Britt"><span class="item-text">Confirm event agency/production partner and scope <span class="owner">Rachana / Britt</span></span></li>
+                <li class="has-risk" data-owners="Crystal Dione"><span class="item-text">Confirm on-site videographer + editor(s) with clear brief <span class="owner">Crystal leads, Dione briefs</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">London: editor uploaded footage instead of editing. Brief must include deliverables + "what good looks like."</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Recruit volunteers and confirm headcount <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Assign single contact per external vendor <span class="owner">Rachana</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Legal &amp; Compliance</h3>
+            <ul class="checklist">
+                <li data-owners="Momo"><span class="item-text">Event insurance (public liability) <span class="owner">Momo</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Permits: street trading, temporary event notice, parking suspensions <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Alcohol licensing (if serving) <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Food safety compliance <span class="owner">Rachana</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Talent/creator contracts (content usage rights) <span class="owner">Momo</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Music licensing (PRS/PPL or royalty-free) <span class="owner">Dione</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Data collection compliance (GDPR for UK events) <span class="owner">Momo</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>PR &amp; Press</h3>
+            <ul class="checklist">
+                <li data-owners="Rachana Momo"><span class="item-text">Define press angle / story <span class="owner">Rachana / Momo</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Build press list and send invitations <span class="owner">Rachana</span></span></li>
+                <li data-owners="Crystal Dione"><span class="item-text">Prepare press kit (brand one-pager, images, spokesperson) <span class="owner">Crystal leads, Dione assembles</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Prepare shot list for press photographers <span class="owner">Dione</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Identify VIP guests with press value <span class="owner">Rachana</span> <span class="note-indicator">&#9658;</span><span class="note">London: MP Samantha Niblett confirmed for dinner and introduced the evening.</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Designate press liaison for event day <span class="owner">Rachana</span></span></li>
+            </ul>
+        </div>
+
+        <!-- MODULE: Dinner -->
+        <div class="category module-only" data-module="dinner">
+            <h3>Dinner Planning</h3>
+            <ul class="checklist">
+                <li><span class="item-text">Confirm restaurant/venue and private dining capacity</span></li>
+                <li><span class="item-text">Set guest count target (guests + team seats)</span></li>
+                <li><span class="item-text">Build curated guest list with RSVP deadline</span></li>
+                <li><span class="item-text">Plan seating arrangement</span></li>
+                <li><span class="item-text">Confirm menu with restaurant</span></li>
+                <li><span class="item-text">Collect dietary requirements from all guests</span></li>
+                <li><span class="item-text">Plan table dressing / centerpieces</span></li>
+                <li><span class="item-text">Plan welcome moment (signage, host greeting)</span></li>
+                <li><span class="item-text">Plan speeches/toasts (who, when, about what)</span></li>
+                <li><span class="item-text">Plan gift bags for dinner guests</span></li>
+            </ul>
+        </div>
+
+
+        <!-- MODULE: Booth -->
+        <div class="category module-only" data-module="booth">
+            <h3>Booth / Trade Show Planning</h3>
+            <ul class="checklist">
+                <li><span class="item-text">Confirm booth location and dimensions</span></li>
+                <li><span class="item-text">Design booth layout (demo, display, seating zones)</span></li>
+                <li><span class="item-text">Confirm what venue provides vs what you bring</span></li>
+                <li><span class="item-text">Plan step-and-repeat / backdrop</span></li>
+                <li><span class="item-text">Confirm show schedule (public hours, VIP, fashion show)</span></li>
+                <li><span class="item-text">Plan staffing rotation for long days</span></li>
+                <li><span class="item-text">Confirm VIP/show ticket allocation</span></li>
+                <li><span class="item-text">Source booth additions (curtain, branding, lighting)</span></li>
+            </ul>
+        </div>
+
+        <div class="learning">
+            <strong>Learning (Jul 9 Crystal):</strong> "What we're missing is giving Dione the green light on who she can delegate to, without too much myself or Momo involved."
+        </div>
+    </div>
+
+    <!-- ========== PHASE 2 ========== -->
+    <div class="phase" id="phase2">
+        <div class="phase-header">
+            <span class="phase-tag">2-3 Weeks Out</span>
+            <h2>Design, Vendors &amp; Production</h2>
+        </div>
+
+        <div class="category">
+            <h3>Design &amp; Creative Assets <span class="cat-template-link" onclick="event.stopPropagation(); downloadTemplate('design-asset-tracker')">Download Asset Tracker</span></h3>
+            <ul class="checklist">
+                <li class="has-risk" data-owners="Crystal"><span class="item-text">List ALL print items with exact sizes and quantities <span class="owner">Crystal leads</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">London: sizes requested day-of while Crystal was mid-flight. List everything at once.</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Create design asset tracker (item / size / status / .ai file / deadline) <span class="owner">Dione</span></span></li>
+                <li class="has-risk" data-owners="Momo"><span class="item-text">Set DESIGN FREEZE date and communicate to all stakeholders <span class="owner">Momo</span> <span class="risk">Risk</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Produce all .ai output files and upload to shared drive <span class="owner">Crystal</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Set artwork deadline = printer deadline minus 48 hours <span class="owner">Crystal</span> <span class="note-indicator">&#9658;</span><span class="note">Crystal leads (she knows design timeline). Dione supports: reminds in advance, follows up, helps vectorize/mock.</span></span></li>
+                <li data-owners="Rachana Britt"><span class="item-text">Confirm printer and their hard deadlines <span class="owner">Rachana / Britt</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Get sign-off on brand colors and materials ONCE <span class="owner">Crystal</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Prepare signage, photo wall, stickers, product labels, posters <span class="owner">Crystal</span></span></li>
+                <li data-owners="Crystal Dione"><span class="item-text">Prepare digital assets (projector, games, social templates) <span class="owner">Crystal leads, Dione supports</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Social media announcement assets <span class="owner">Dione</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Vendors &amp; F&amp;B <a class="cat-template-link" href="https://docs.google.com/spreadsheets/d/19pfxbKJcPqm-FMJ8dezv4t9llzetc4M26vTsoRgfOYU/edit" target="_blank" onclick="event.stopPropagation()">Open Vendor Sheet</a></h3>
+            <ul class="checklist">
+                <li class="has-risk" data-owners="Momo"><span class="item-text">Lock F&amp;B concept: ONE decision-maker, ONE deadline <span class="owner">Momo</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">Miami popsicle: 6 days, 4 options, 4 deciders on WA. One person decides by [date].</span></span></li>
+                <li data-owners="Britt"><span class="item-text">Document backup F&amp;B plan BEFORE it's needed <span class="owner">Britt</span></span></li>
+                <li data-owners="Britt"><span class="item-text">Confirm vendor, quantity, delivery schedule <span class="owner">Britt</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">If branded F&amp;B: send artwork with hard deadline <span class="owner">Crystal</span></span></li>
+                <li data-owners="Britt Rachana"><span class="item-text">Source cold storage (dry ice, coolers, freezer) <span class="owner">Britt / Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Confirm bar vendor: menu, pricing, payment <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Confirm furniture/prop rentals and delivery <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Confirm florist and setup time <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana Britt"><span class="item-text">Confirm set builder scope and materials deadline <span class="owner">Rachana / Britt</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Talent, Creators &amp; Guests <a class="cat-template-link" href="https://docs.google.com/spreadsheets/d/1wlQ4gL2bEDsdLENiJFx1eywtx_xSRiz8rRfZBDpR_ac/edit" target="_blank" onclick="event.stopPropagation()">Open Guest Sheet</a></h3>
+            <ul class="checklist">
+                <li data-owners="Britt Crystal"><span class="item-text">Confirm talent cast list with roles per person <span class="owner">Britt / Crystal</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Send creator briefs (expectations, outfits, content deliverables) <span class="owner">Crystal</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Confirm travel + accommodation <span class="owner">Andrea</span> <span class="note-indicator">&#9658;</span><span class="note">Standard: flights + hotel + $150/day per diem (reimbursement, not upfront).</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Collect flight details and share with team <span class="owner">Andrea</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Arrange airport transfers <span class="owner">Andrea</span></span></li>
+                <li data-owners="Rachana Britt"><span class="item-text">Book celebrity/VIP and confirm their requirements <span class="owner">Rachana / Britt</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Build guest tracker (name, RSVP, dietary, +1) <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Set capacity and overflow strategy <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Confirm games master / host <span class="owner">Rachana</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Shipping &amp; Product <a class="cat-template-link" href="https://docs.google.com/spreadsheets/d/1AnXlcLGEQcl3GnI7s8QCcdd1GqXrox4PHjEQGM8L-vE/edit" target="_blank" onclick="event.stopPropagation()">Open Inventory Sheet</a></h3>
+            <ul class="checklist">
+                <li data-owners="Momo"><span class="item-text">Confirm product inventory with quantities <span class="owner">Momo</span></span></li>
+                <li class="has-risk" data-owners="Momo Andrea"><span class="item-text">Ship products early (min 1 week buffer) <span class="owner">Momo / Andrea</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">Crystal hand-carried 6 suitcases alone through JFK customs. Ship ahead.</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Confirm delivery address (pallets? forklift? loading dock?) <span class="owner">Andrea</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Track shipments with arrival dates <span class="owner">Andrea</span></span></li>
+                <li data-owners="Crystal Andrea"><span class="item-text">Plan gift bags (contents, quantity, assembly) <span class="owner">Crystal leads, Andrea executes</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Plan product demo setup and staff training <span class="owner">Crystal</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Shipping &amp; Warehousing SOP</h3>
+            <ul class="checklist">
+                <li class="has-risk" data-owners="Andrea"><span class="item-text">Map supply chain parties: list every warehouse, shipper, and factory with what they do, what they DON'T do, and comms channel <span class="owner">Andrea</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">US event: team confused Portless (storage) with GPS (shipping). Messages sent to wrong party. Map parties BEFORE any shipping starts.</span></span></li>
+                <li class="has-risk" data-owners="Andrea"><span class="item-text">SKU creation checklist: (1) Add to Shopify as unlisted, (2) Send details to warehouse (name, dimensions, weight, COGS, price), (3) Warehouse confirms sync, (4) THEN coordinate shipping <span class="owner">Andrea</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">US event: SKUs added to spreadsheet instead of Shopify. Warehouse couldn't find them. Central system = Shopify, always.</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Every vendor message must include: SKU code, description in brackets, quantity, and specific action requested. Plain text, no spreadsheet links. <span class="owner">Andrea</span></span></li>
+                <li class="has-risk" data-owners="Andrea Rachana Momo"><span class="item-text">All vendor comms approved by ops lead before sending <span class="owner">Andrea drafts, Rachana/Momo approves</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">US event: messages sent to wrong party (Portless instead of GPS) without review. Approval gate prevents miscommunication reaching vendors.</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Create inventory tracker (single Google Sheet): SKU, description, qty, current location, destination, transit status. Updated after every shipment. <span class="owner">Andrea</span></span></li>
+                <li class="has-risk" data-owners="Andrea"><span class="item-text">Notify destination warehouse of incoming shipments BEFORE shipping <span class="owner">Andrea</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">US event: PBD Chicago had no advance notice of incoming merch. Can't inbound surprise shipments.</span></span></li>
+                <li class="has-risk" data-owners="Andrea"><span class="item-text">When two people give conflicting instructions on ops process, flag immediately. Don't pick one. <span class="owner">Andrea</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">US event: Simon said "draft" on Shopify, Rachana said "unlisted." One instruction was followed without flagging the conflict. Caught days later. Conflicting info = escalate, not guess.</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Factory Coordination (if packing/assembling in China)</h3>
+            <ul class="checklist">
+                <li data-owners="Andrea"><span class="item-text">Confirm factory can fulfill packing request (capacity + timeline) before committing <span class="owner">Andrea</span></span></li>
+                <li class="has-risk" data-owners="Crystal Dione"><span class="item-text">Send photo guide showing exactly how items should be packed (realistic photos, not AI renders) <span class="owner">Crystal leads, Dione renders</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">US event: AI render didn't match real product ratios. Crystal flagged. Use real photos of actual products when possible.</span></span></li>
+                <li class="has-risk" data-owners="Andrea"><span class="item-text">Confirm factory has all required materials in stock (don't assume) <span class="owner">Andrea</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">US event: assumed factory had 1,200 toys without confirming. Always verify inventory before committing to a packing plan.</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Get factory lead time + completion date estimate <span class="owner">Andrea</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Coordinate material delivery TO factory from multiple sources (e.g., bags from vendor A, plushies from factory B) <span class="owner">Andrea</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">All factory comms via WeChat. Draft messages in WA group for approval before sending on WeChat. <span class="owner">Andrea</span></span></li>
+            </ul>
+        </div>
+
+        <div class="learning">
+            <strong>Learning (Jul 2026, US event prep):</strong> "Operations is so much about clarity so that people can execute seamlessly." — Rachana. When the team doesn't understand the supply chain parties, every message becomes a potential error. Map the parties first, then communicate. Also: when two experts give conflicting instructions, the team member must escalate — not pick one and hope.
+        </div>
+
+        <div class="category">
+            <h3>Partner &amp; Sponsor Coordination</h3>
+            <ul class="checklist">
+                <li data-owners="Momo Rachana"><span class="item-text">Confirm all brand partners <span class="owner">Momo / Rachana</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Agree on co-branding (where logos appear, cross-posting) <span class="owner">Crystal</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Coordinate collab posts and tag agreements <span class="owner">Dione</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Confirm partner-provided product and delivery <span class="owner">Andrea</span></span></li>
+            </ul>
+        </div>
+
+
+        <div class="learning">
+            <strong>Learning (Miami):</strong> "Lets lockdown in next hour" appeared 3x in the popsicle thread over 6 days. Soft deadlines don't work. Hard deadline + one decision-maker = done in minutes.
+        </div>
+    </div>
+
+    <!-- ========== PHASE 3 ========== -->
+    <div class="phase" id="phase3">
+        <div class="phase-header">
+            <span class="phase-tag">1 Week Out</span>
+            <h2>Lock-In &amp; Coordination</h2>
+        </div>
+
+        <div class="category">
+            <h3>Production Lock-In</h3>
+            <ul class="checklist">
+                <li data-owners="Dione"><span class="item-text">All print jobs in production (design freeze passed) <span class="owner">Dione</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">All deliveries confirmed with date, time, address, contact <span class="owner">Andrea</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">All vendor payments processed or pre-authorized <span class="owner">Andrea</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Storage unit booked and access confirmed <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Transport arranged (storage to venue, venue to storage) <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">AV/tech setup confirmed <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Wristbands/tokens ordered <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Ticketing settings finalized (capacity, waitlist) <span class="owner">Rachana</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Content &amp; Social Strategy <span class="cat-template-link" onclick="event.stopPropagation(); downloadTemplate('content-brief')">Download Content Brief</span></h3>
+            <ul class="checklist">
+                <li class="has-risk" data-owners="Crystal Dione"><span class="item-text">Brief ALL content team: deliverables, style, turnaround, references <span class="owner">Crystal leads direction, Dione leads brief doc</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">Include: how many edits/day, format, turnaround time, 3 reference examples of "good."</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Assign content roles: who films, edits, posts, manages DMs <span class="owner">Crystal</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Create shot list (must-have moments) <span class="owner">Dione</span> <span class="note-indicator">&#9658;</span><span class="note">Dione leads. Crystal approves. Includes research references and "what good looks like" examples.</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Research references and "what good looks like" examples for content team <span class="owner">Dione</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Content research: trends, formats, inspo for event-specific content <span class="owner">Dione</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Schedule pre-event hype posts <span class="owner">Dione</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Prepare live posting schedule per day <span class="owner">Dione</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Set up RAW footage drive + EDITED drive (separate) <span class="owner">Dione</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Confirm Dione on standby for real-time social <span class="owner">Dione</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Prepare caption templates and hashtag sets <span class="owner">Dione</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Run Sheet <a class="cat-template-link" href="https://docs.google.com/spreadsheets/d/1MRtUKmL8Zr0ySJ5maPxCo7r2cdhbM9gFnsgsEbAhWB0/edit" target="_blank" onclick="event.stopPropagation()">Open Run Sheet</a></h3>
+            <ul class="checklist">
+                <li class="has-risk" data-owners="Momo Rachana"><span class="item-text">Create minute-by-minute run sheet <span class="owner">Momo / Rachana</span> <span class="risk">Risk</span> <span class="note-indicator">&#9658;</span><span class="note">London: run sheet started 4:30pm the day before. Start 7 days out.</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Create individual call sheets per team member <span class="owner">Dione</span></span></li>
+                <li data-owners="Rachana Britt"><span class="item-text">Map celebrity/VIP flow (arrival, activities, exit) <span class="owner">Rachana / Britt</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Plan crowd management (queue, entry, capacity monitoring) <span class="owner">Rachana</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Share run sheet with ALL team and partners <span class="owner">Dione</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Health, Safety &amp; Security</h3>
+            <ul class="checklist">
+                <li data-owners="Rachana"><span class="item-text">First aid kit on-site and designated first aider <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Emergency exits identified <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Crowd capacity monitoring plan <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana Britt"><span class="item-text">Security for celebrity/VIP <span class="owner">Rachana / Britt</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Emergency contact list prepared <span class="owner">Dione</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Weather contingency for outdoor elements <span class="owner">Rachana</span></span></li>
+            </ul>
+        </div>
+
+        <!-- MODULE: Multi-day -->
+        <div class="category module-only" data-module="multiday">
+            <h3>Multi-Day Coordination</h3>
+            <ul class="checklist">
+                <li><span class="item-text">Map shared vs day-specific assets</span></li>
+                <li><span class="item-text">Plan storage between days (transfer logistics)</span></li>
+                <li><span class="item-text">Create per-day run sheets</span></li>
+                <li><span class="item-text">Plan team rest (minimum sleep hours, days off)</span></li>
+                <li><span class="item-text">Daily standup plan (15 min each morning)</span></li>
+                <li><span class="item-text">Track budget per day (don't overspend Day 1)</span></li>
+            </ul>
+        </div>
+
+        <div class="learning">
+            <strong>Learning (Jun 29 Dione):</strong> "Set expectations: not just roles, but what is expected of everybody, what is the output, what good looks like, and the turnaround time."
+        </div>
+    </div>
+
+    <!-- ========== PHASE 4 ========== -->
+    <div class="phase" id="phase4">
+        <div class="phase-header">
+            <span class="phase-tag">48 Hours Out</span>
+            <h2>Final Checks</h2>
+        </div>
+
+        <div class="category">
+            <h3>Asset Verification</h3>
+            <ul class="checklist">
+                <li data-owners="Rachana"><span class="item-text">All print items collected/delivered and physically verified <span class="owner">Rachana</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Verify colors, sizes, no typos on all items <span class="owner">Crystal</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Backup print shop identified (with hours confirmed) <span class="owner">Rachana</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">All branded items sorted into labelled boxes <span class="owner">Andrea</span></span></li>
+                <li data-owners="Dione"><span class="item-text">All digital content loaded on devices and tested <span class="owner">Dione</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Logistics Final</h3>
+            <ul class="checklist">
+                <li data-owners="Andrea"><span class="item-text">All products received and counted against inventory <span class="owner">Andrea</span></span></li>
+                <li data-owners="Andrea Rachana"><span class="item-text">Gift bags assembled (or assembly team confirmed) <span class="owner">Andrea / Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Staff food and drinks arranged <span class="owner">Rachana</span></span></li>
+                <li data-owners="Dione"><span class="item-text">All devices charged (phones, cameras, power banks) <span class="owner">Dione</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Event kit packed (tape, scissors, markers, first aid, extension cords) <span class="owner">Rachana</span></span></li>
+                <li data-owners="Momo Rachana"><span class="item-text">First person on-site confirmed (who, time, access) <span class="owner">Momo / Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Final guest list with dietary requirements <span class="owner">Rachana</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Print physical copies of guest list, run sheet, contacts <span class="owner">Dione</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Team Comms</h3>
+            <ul class="checklist">
+                <li data-owners="Momo"><span class="item-text">Final brief sent to ALL team (time, address, dress code, contacts) <span class="owner">Momo</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Final brief to talent (call time, location pin, parking) <span class="owner">Andrea</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">All vendor arrival times confirmed <span class="owner">Rachana</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Emergency contact list shared <span class="owner">Dione</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Volunteers confirmed (who, time, role) <span class="owner">Rachana</span></span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== PHASE 5 ========== -->
+    <div class="phase" id="phase5">
+        <div class="phase-header">
+            <span class="phase-tag">Day Of</span>
+            <h2>Execution</h2>
+        </div>
+
+        <div class="category">
+            <h3>Setup (Before Doors)</h3>
+            <ul class="checklist">
+                <li><span class="item-text">Arrive 2-3 hours before doors <span class="owner">All</span></span></li>
+                <li data-owners="Crystal Momo"><span class="item-text">Walk floor plan and verify every station <span class="owner">Crystal leads visual, Momo leads ops</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Test all tech (projector, sound, games, WiFi, cameras) <span class="owner">Dione</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Set up product displays and demos <span class="owner">Crystal</span></span></li>
+                <li data-owners="Crystal Rachana"><span class="item-text">Set up photo wall / installations <span class="owner">Crystal leads, Rachana logistics</span></span></li>
+                <li data-owners="Rachana Britt"><span class="item-text">Set up F&amp;B station <span class="owner">Rachana / Britt</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Set up content station (charging, upload, captions doc) <span class="owner">Dione</span></span></li>
+                <li data-owners="Momo"><span class="item-text">10-min team huddle (roles, schedule, escalation path) <span class="owner">Momo</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Designate ONE person for real-time approvals <span class="owner">Momo</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Music/ambience on and tested <span class="owner">Dione</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Final visual walkthrough with creative lead <span class="owner">Crystal</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>During Event</h3>
+            <ul class="checklist">
+                <li data-owners="Rachana"><span class="item-text">Door management (wristbands, capacity, VIP) <span class="owner">Rachana</span></span></li>
+                <li data-owners="Britt Rachana"><span class="item-text">F&amp;B monitoring and restocking <span class="owner">Britt / Rachana</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Content team filming per shot list + spontaneous <span class="owner">Crystal</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Social team posting live (stories, reels) <span class="owner">Dione</span></span></li>
+                <li data-owners="Britt"><span class="item-text">Talent management (brief 5 min before each slot) <span class="owner">Britt</span></span></li>
+                <li data-owners="Momo Crystal"><span class="item-text">Product demo stations staffed <span class="owner">Momo leads, Crystal trains</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Monitor social mentions and engage <span class="owner">Dione</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Track expenses (photo every receipt) <span class="owner">Andrea</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Floater handling unexpected issues <span class="owner">Momo</span></span></li>
+            </ul>
+        </div>
+
+        <!-- MODULE: Dinner day-of -->
+        <div class="category module-only" data-module="dinner">
+            <h3>Dinner Day-Of</h3>
+            <ul class="checklist">
+                <li><span class="item-text">Arrive 2+ hours early for table setup</span></li>
+                <li><span class="item-text">Place name cards, menus, gift bags at seats</span></li>
+                <li><span class="item-text">Brief restaurant staff on flow (when to serve, when to pause)</span></li>
+                <li><span class="item-text">Photographer positioned for arrivals, table, speeches</span></li>
+                <li><span class="item-text">Guest reception (greet by name, direct to seats/drinks)</span></li>
+            </ul>
+        </div>
+
+
+        <div class="category">
+            <h3>Teardown</h3>
+            <ul class="checklist">
+                <li data-owners="Momo"><span class="item-text">Confirm teardown roster (who stays) <span class="owner">Momo</span></span></li>
+                <li data-owners="Andrea Rachana"><span class="item-text">Pack ALL branded items (nothing left behind) <span class="owner">Andrea / Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Collect/confirm pickup for rented items <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Move items to storage if multi-day <span class="owner">Rachana</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Collect ALL raw footage onto shared drive <span class="owner">Dione</span></span></li>
+                <li data-owners="Momo"><span class="item-text">Quick 5-min team debrief <span class="owner">Momo</span></span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== PHASE 6 ========== -->
+    <div class="phase" id="phase6">
+        <div class="phase-header">
+            <span class="phase-tag">Post-Event</span>
+            <h2>Content, Finance &amp; Retro</h2>
+        </div>
+
+        <div class="category">
+            <h3>Content Production (Week 1-2)</h3>
+            <ul class="checklist">
+                <li data-owners="Dione"><span class="item-text">All raw footage uploaded within 24 hours <span class="owner">Dione</span></span></li>
+                <li class="has-risk" data-owners="Crystal Dione"><span class="item-text">Editor brief sent (priority list, deadlines, references) <span class="owner">Crystal leads direction, Dione leads brief doc</span> <span class="risk">Risk</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Content rollout calendar (release over 2-4 weeks) <span class="owner">Dione</span> <span class="note-indicator">&#9658;</span><span class="note">Crystal: "We shouldn't throw all the eggs within one week."</span></span></li>
+                <li><span class="item-text">Priority edits: highlights reel, reactions, celebrity, BTS</span></li>
+                <li data-owners="Dione"><span class="item-text">Chase editor daily on status <span class="owner">Dione</span></span></li>
+                <li data-owners="Crystal"><span class="item-text">Quality gate: review ALL edits before posting <span class="owner">Crystal</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Post-event engagement (thank you, tags, comments) <span class="owner">Dione</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Repurpose footage into ads, email, website <span class="owner">Dione</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Finance &amp; Admin</h3>
+            <ul class="checklist">
+                <li data-owners="Andrea"><span class="item-text">Collect ALL invoices and receipts (48hr deadline) <span class="owner">Andrea</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Process talent reimbursements <span class="owner">Andrea</span></span></li>
+                <li data-owners="Andrea"><span class="item-text">Budget reconciliation (actual vs planned, convert all to base currency) <span class="owner">Andrea</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Return rented items <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana Momo"><span class="item-text">Send thank-you notes to partners and VIPs <span class="owner">Rachana / Momo</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Update guest list with new contacts from event <span class="owner">Rachana</span></span></li>
+                <li data-owners="Rachana Momo"><span class="item-text">Follow up on partnership leads <span class="owner">Rachana / Momo</span></span></li>
+            </ul>
+        </div>
+
+        <div class="category">
+            <h3>Retrospective <span class="cat-template-link" onclick="event.stopPropagation(); downloadTemplate('post-event-report')">Download Report Template</span></h3>
+            <ul class="checklist">
+                <li data-owners="Momo"><span class="item-text">Team debrief meeting within 1 week <span class="owner">Momo</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Document: what worked, what broke, what to change <span class="owner">Dione</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Capture metrics (attendance, content, engagement, press) <span class="owner">Dione</span></span></li>
+                <li data-owners="Rachana"><span class="item-text">Document vendor performance (rehire or not) <span class="owner">Rachana</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Update this checklist template with new learnings <span class="owner">Dione</span></span></li>
+                <li data-owners="Dione"><span class="item-text">Archive all event assets in shared drive <span class="owner">Dione</span></span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== TEMPLATES ========== -->
+    <div class="phase" id="phaseTemplates">
+        <div class="phase-header">
+            <span class="phase-tag" style="background: var(--black);">Templates</span>
+            <h2>Key Documents to Prepare</h2>
+        </div>
+
+        <p style="font-size:0.82rem; color:var(--gray-500); margin-bottom:16px;">Green cards open live Google Sheets (File &gt; Make a copy per event). Gray cards download CSV files.</p>
+        <div class="templates-grid">
+            <a class="template-card" href="https://docs.google.com/spreadsheets/d/11bydOZG18z9VSszN5K3Hk7LGNhobfpIrn4Af_cbNlf0/edit" target="_blank"><h4>Creative Direction Brief <span class="dl-icon" style="background:var(--green); color:white;">SHEET</span></h4><p>Crystal fills at kickoff. Brand mood, references, approval rules, "what good looks like." Dione's license to run.</p></a>
+            <a class="template-card" href="https://docs.google.com/spreadsheets/d/1nfnJSKTT6aDQMsExG4qu6QpNJLFaCykBOvfO1RzS8AM/edit" target="_blank"><h4>Budget Tracker <span class="dl-icon" style="background:var(--green); color:white;">SHEET</span></h4><p>Multi-currency (USD/GBP/HKD). Estimated vs actual, conversion log, receipt tracking.</p></a>
+            <a class="template-card" href="https://docs.google.com/spreadsheets/d/1wlQ4gL2bEDsdLENiJFx1eywtx_xSRiz8rRfZBDpR_ac/edit" target="_blank"><h4>Guest / RSVP Tracker <span class="dl-icon" style="background:var(--green); color:white;">SHEET</span></h4><p>RSVP status, dietary, +1s, creator post tracking (post-event ROI).</p></a>
+            <a class="template-card" href="https://docs.google.com/spreadsheets/d/1MRtUKmL8Zr0ySJ5maPxCo7r2cdhbM9gFnsgsEbAhWB0/edit" target="_blank"><h4>Run Sheet <span class="dl-icon" style="background:var(--green); color:white;">SHEET</span></h4><p>Minute-by-minute schedule. Setup through teardown with status tracking.</p></a>
+            <a class="template-card" href="https://docs.google.com/spreadsheets/d/1AnXlcLGEQcl3GnI7s8QCcdd1GqXrox4PHjEQGM8L-vE/edit" target="_blank"><h4>Inventory List <span class="dl-icon" style="background:var(--green); color:white;">SHEET</span></h4><p>Ship/receive/giveaway/return tracking. Post-event reconciliation built in.</p></a>
+            <a class="template-card" href="https://docs.google.com/spreadsheets/d/19pfxbKJcPqm-FMJ8dezv4t9llzetc4M26vTsoRgfOYU/edit" target="_blank"><h4>Vendor Contact Sheet <span class="dl-icon" style="background:var(--green); color:white;">SHEET</span></h4><p>All vendors with currency, payment status, performance rating, rehire.</p></a>
+            <div class="template-card" onclick="downloadTemplate('master-event-brief')"><h4>Master Event Brief <span class="dl-icon">CSV</span></h4><p>Objective, dates, venue, team, budget, timeline, metrics</p></div>
+            <div class="template-card" onclick="downloadTemplate('design-asset-tracker')"><h4>Design Asset Tracker <span class="dl-icon">CSV</span></h4><p>Item, size, qty, .ai file, printer, deadline, status</p></div>
+            <div class="template-card" onclick="downloadTemplate('call-sheet')"><h4>Call Sheet (per person) <span class="dl-icon">CSV</span></h4><p>Name, arrival, role each hour, contact, escalation</p></div>
+            <div class="template-card" onclick="downloadTemplate('content-brief')"><h4>Content Brief <span class="dl-icon">CSV</span></h4><p>Deliverables, format, turnaround, references, upload location</p></div>
+            <div class="template-card" onclick="downloadTemplate('post-event-report')"><h4>Post-Event Report <span class="dl-icon">CSV</span></h4><p>Metrics, content, budget vs actual, lessons, next steps</p></div>
+            <div class="template-card" onclick="downloadTemplate('master-checklist')"><h4>Full Master Checklist <span class="dl-icon">CSV</span></h4><p>All 170+ items with Phase, Category, Owner, Status, Module columns</p></div>
+        </div>
+    </div>
+
+</div><!-- end .container -->
+</div><!-- end #tab-checklist -->
+
+
+<!-- ===== REFERENCE TAB ===== -->
+<div class="tab-content" id="tab-reference">
+<div class="container">
+
+    <!-- ========== DECISION FRAMEWORK ========== -->
+    <div class="phase" id="phaseRules">
+        <div class="phase-header">
+            <span class="phase-tag" style="background: var(--black);">Reference</span>
+            <h2>Decision Rules</h2>
+        </div>
+
+        <div class="category" style="background: #FFF7ED; border-color: #FDBA74;">
+            <h3 style="color: #C2410C;">10 Rules From Past Events</h3>
+            <ul class="checklist">
+                <li onclick="toggleCheck(this)"><strong>One decision-maker per category.</strong> Not committee. One person decides, informs the rest.</li>
+                <li onclick="toggleCheck(this)"><strong>Design freeze is sacred.</strong> No new requests after [date]. Communicate to ALL including founders.</li>
+                <li onclick="toggleCheck(this)"><strong>Payment authority in event timezone.</strong> Card holder awake OR team has pre-authorized limit.</li>
+                <li onclick="toggleCheck(this)"><strong>Artwork deadline = printer minus 48 hours.</strong> Not same-day. Non-negotiable.</li>
+                <li onclick="toggleCheck(this)"><strong>Editor brief = deliverables + references + turnaround + "what good looks like."</strong></li>
+                <li onclick="toggleCheck(this)"><strong>Backup plan documented before it's needed.</strong> If primary falls through, Plan B is already named.</li>
+                <li onclick="toggleCheck(this)"><strong>Daily status update from each lead during final week.</strong> One message: where I am, what's blocking, what I need.</li>
+                <li onclick="toggleCheck(this)"><strong>Conflicting instructions = flag immediately, don't pick one.</strong> One message to both people: "[Person A] said X, [Person B] said Y — which one?" Stop. Wait. Don't execute either until resolved.
+                    <span class="note expanded">US event: Simon said "draft" on Shopify, Rachana said "unlisted." One instruction was followed without flagging the conflict. Caught days later. Escalate, don't guess.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Schedule changes = communicate to all affected parties within 24 hours.</strong> If dates, venues, or timelines shift, everyone whose work depends on it needs to know immediately. Changes within 4 weeks of the event need Momo's sign-off. Changes within 2 weeks need Momo + Rachana together.
+                    <span class="note expanded">A shifted date affects shipping, vendors, travel, content plans, and staffing. The earlier the team aligns, the less rework. Agree on a realistic timeline together rather than adjusting silently.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Extended hours need a heads-up, not a surprise.</strong> If event prep will require work beyond regular hours, flag it at least 1 week before: how many extra hours, which days, and what specifically needs the extra time. Momo or Crystal confirms so the team can plan around it.
+                    <span class="note expanded">Events naturally have crunch periods. Naming it early lets the team prepare, swap tasks, and protect rest days — instead of discovering the workload at the last minute.</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="category" style="background: #FFF7ED; border-color: #FDBA74;">
+            <h3 style="color: #C2410C;">Escalation &amp; Communication</h3>
+            <ul class="checklist">
+                <li onclick="toggleCheck(this)"><strong>No vendor reply in 24hrs:</strong> Call. Not another message.</li>
+                <li onclick="toggleCheck(this)"><strong>Design file 48hrs late:</strong> Escalate to Crystal + Momo immediately.</li>
+                <li onclick="toggleCheck(this)"><strong>Founder silent 4hrs during event week:</strong> Decide yourself (within authority), inform after.</li>
+                <li onclick="toggleCheck(this)"><strong>Someone AWOL:</strong> Reassign tasks immediately. Debrief later.</li>
+                <li onclick="toggleCheck(this)"><strong>"Under [X amount], just get it" rule:</strong> Define threshold at kickoff.</li>
+                <li onclick="toggleCheck(this)"><strong>Pin decisions in WA.</strong> Stops re-debates.</li>
+                <li onclick="toggleCheck(this)"><strong>Voice notes for context, text for decisions.</strong> Decisions must be searchable.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== DIRECTION & AUTHORITY ========== -->
+    <div class="phase" id="phaseAuthority">
+        <div class="phase-header">
+            <span class="phase-tag" style="background: var(--black);">Authority</span>
+            <h2>Direction, Ownership &amp; Authority</h2>
+        </div>
+
+        <div class="category" style="background: #EFF6FF; border-color: #93C5FD;">
+            <h3 style="color: #1D4ED8;">Who Decides What</h3>
+            <ul class="checklist">
+                <li onclick="toggleCheck(this)"><strong>Creative / content direction &rarr; Crystal is final say.</strong> Brand aesthetic, edit style, what gets posted, design quality. If Crystal says X and Momo says Y on a creative decision, Crystal wins.
+                    <span class="note expanded">Crystal Jul 9: "I'm very strict on content because I know we can all do a really good job now."</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Operations / logistics / budget &rarr; Momo is final say.</strong> Vendor selection, spending, timelines, staffing, venue decisions. Crystal doesn't need to weigh in on storage units.</li>
+                <li onclick="toggleCheck(this)"><strong>Guest list / venue / on-ground logistics / warehouse &amp; shipping ops &rarr; Rachana is final say.</strong> Capacity, ticketing, parking, volunteers, delivery coordination, Portless, GPS, SKU process. When Simon and Rachana give conflicting ops instructions, Rachana's version is correct.</li>
+                <li onclick="toggleCheck(this)"><strong>Talent / creator sourcing &rarr; Britt is final say.</strong> Who to bring, negotiation, local vendor relationships.</li>
+                <li onclick="toggleCheck(this)"><strong>Rahul overrides all — but Crystal must always know.</strong> When Rahul gives direction in the event WA group, that IS the decision (everyone saw it). When Rahul gives direction in DMs or separate calls, Dione's first move: message Crystal "Rahul just said X — does this change what we're doing?"
+                    <span class="note expanded">Rahul drops in unpredictably with strategic calls (London: "limited spots, first come first served"). His word stands — but Crystal must know so she doesn't work against it.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>When Crystal and Momo conflict &rarr; Dione flags, doesn't choose.</strong> One message to both: "Crystal said X, Momo said Y — which one?" Stop trying to satisfy both silently.
+                    <span class="note expanded">When two leads give different directions, flag it immediately instead of trying to satisfy both.</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="category" style="background: #EFF6FF; border-color: #93C5FD;">
+            <h3 style="color: #1D4ED8;">Lead vs Support (Ownership Rules)</h3>
+            <ul class="checklist">
+                <li onclick="toggleCheck(this)"><strong>LEAD = you drive it, you're accountable for the outcome.</strong> You don't wait for someone to tell you to move. You set the deadline, you chase, you deliver.</li>
+                <li onclick="toggleCheck(this)"><strong>SUPPORT = you help when asked, you remind, you follow up.</strong> You don't own the outcome. You unblock the lead.</li>
+                <li onclick="toggleCheck(this)"><strong>Every shared task must name one LEAD.</strong> No "/" without clarity. "Crystal / Dione" means nothing if neither knows who drives.
+                    <span class="note expanded">Dione's feedback: "It's very important to know who leads. 'Set artwork deadline' is Crystal's task — I support by reminding and following up."</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="category" style="background: #EFF6FF; border-color: #93C5FD;">
+            <h3 style="color: #1D4ED8;">Dione's Authority</h3>
+            <ul class="checklist">
+                <li onclick="toggleCheck(this)"><strong>After Crystal's first approval on any new format, Dione runs with it.</strong> First poster approved &rarr; Dione can produce the rest in the same style without checking each one. First social post approved &rarr; Dione schedules the rest.
+                    <span class="note expanded">Crystal Jul 9: "The first few times, me, you, and Momo sit down and clarify. Then once it's good, you're basically on your own."</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Dione can brief and direct external teams (Forge, editors, printers) directly.</strong> No need to go through Crystal or Momo for every interaction.
+                    <span class="note expanded">Crystal Jul 9: "I want to dedicate you to be the point of contact. For example, meeting with Forge."</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Dione is the quality gate before founders.</strong> If content isn't good enough, Dione sends it back before Crystal/Momo/Rahul ever see it.
+                    <span class="note expanded">Crystal Jul 9: "If you can't catch it first before getting to the founder, then we did our job."</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Dione can nudge and follow up with anyone</strong> — vendors, editors, agency, Crystal, Momo — without asking permission. Following up is not overstepping. Silence is the problem, not nudging.</li>
+                <li onclick="toggleCheck(this)"><strong>Dione flags blockers same-day.</strong> If she's waiting on an approval, a file, or a response for more than 4 hours during event week, she escalates. Not "I'll wait until the next sync."
+                    <span class="note expanded">Waiting for responses costs days. If blocked 4+ hours during event week, escalate — don't wait for the next sync.</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="category" style="background: #EFF6FF; border-color: #93C5FD;">
+            <h3 style="color: #1D4ED8;">Andrea's Authority</h3>
+            <ul class="checklist">
+                <li onclick="toggleCheck(this)"><strong>Andrea owns all finance and logistics execution.</strong> Invoices, reimbursements, flight bookings, hotel, transfers, expense tracking, vendor payments, shipping coordination.</li>
+                <li onclick="toggleCheck(this)"><strong>Andrea can process payments and orders without checking with Dione.</strong> If Crystal or Momo asks Andrea to book a flight or order supplies, Andrea executes directly. No need to route through Dione.</li>
+                <li onclick="toggleCheck(this)"><strong>Andrea follows up with finance (Ron) and vendors directly.</strong> She doesn't need Momo to chase Ron for her. She owns the relationship with AP.</li>
+                <li onclick="toggleCheck(this)"><strong>Dione decides WHAT to get, Andrea executes HOW to get it.</strong> Example: "We need wireless mics" = Dione's call. Ordering them, tracking delivery, processing invoice = Andrea's job.
+                    <span class="note expanded">Jun 17 Dione: "I have to order mics. I suggested we see if Andrea can do this." The line: creative decision vs purchase execution.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Andrea owns merch shipping end-to-end.</strong> SKU creation, factory coordination (WeChat), warehouse communication (Portless), shipper coordination (GPS/Lily), inventory tracking, gift bag packing logistics.</li>
+                <li onclick="toggleCheck(this)"><strong>All external shipping/warehouse messages require ops lead approval until autonomy is earned.</strong> Draft in WA group, Rachana or Momo approves, then send.
+                    <span class="note expanded">US event (Jul 2026): unclear messages were sent to Portless without review. Approval gate applies until process is consistent. Revisit autonomy after 5+ clean approved messages.</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="category" style="background: #EFF6FF; border-color: #93C5FD; cursor: pointer;" onclick="const inner = this.querySelector('.collapsible-inner'); const arrow = this.querySelector('.collapse-arrow'); if(inner.style.display === 'none') { inner.style.display = ''; arrow.textContent = '▾'; } else { inner.style.display = 'none'; arrow.textContent = '▸'; }">
+            <h3 style="color: #1D4ED8;">Team Coordination <span class="collapse-arrow" style="float:right; font-size:1rem;">▸</span></h3>
+            <div class="collapsible-inner" style="display:none;">
+                <p style="font-size:0.82rem; color:var(--gray-500); margin-bottom:12px; font-style:italic;">How Dione and Andrea split work + accountability rhythm</p>
+                <ul class="checklist">
+                    <li onclick="event.stopPropagation(); toggleCheck(this)"><strong>Content, creative, social, research, editor coordination &rarr; Dione</strong></li>
+                    <li onclick="event.stopPropagation(); toggleCheck(this)"><strong>Finance, invoices, travel, shipping, purchases, expenses &rarr; Andrea</strong></li>
+                    <li onclick="event.stopPropagation(); toggleCheck(this)"><strong>Receipts during events:</strong> Anyone photos the receipt &rarr; sends to Andrea immediately. Andrea logs and processes.</li>
+                    <li onclick="event.stopPropagation(); toggleCheck(this)"><strong>Creative vendors (editors, videographers, Forge) &rarr; Dione briefs and manages</strong></li>
+                    <li onclick="event.stopPropagation(); toggleCheck(this)"><strong>Logistics vendors (printers, furniture, catering, transport) &rarr; Rachana / Andrea</strong></li>
+                    <li onclick="event.stopPropagation(); toggleCheck(this)"><strong>If unsure whose lane:</strong> Ask "Is this a creative decision or a logistics/money decision?" Creative = Dione. Money/logistics = Andrea.</li>
+                    <li onclick="event.stopPropagation(); toggleCheck(this)"><strong>Event week: daily status from each lead.</strong> One message by EOD: "Done today / Blocked on / Need by tomorrow." In the event WA group, not DMs.</li>
+                    <li onclick="event.stopPropagation(); toggleCheck(this)"><strong>Post-event: chase editor daily.</strong> One message per day until all deliverables are in.</li>
+                    <li onclick="event.stopPropagation(); toggleCheck(this)"><strong>Post-event: close all invoices within 1 week.</strong> 48hr deadline for receipt collection. Budget reconciliation by end of week 1.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== DECISIONS NEEDED ========== -->
+    <div class="phase" id="phaseQuestions">
+        <div class="phase-header">
+            <span class="phase-tag" style="background: var(--red);">Decisions</span>
+            <h2>Decisions Needed</h2>
+        </div>
+
+        <div class="category" style="background: #FFF1F2; border-color: #FDA4AF;">
+            <h3 style="color: #BE123C;">Creative + Authority (Crystal)</h3>
+            <ul class="checklist">
+                <li onclick="toggleCheck(this)"><strong>Ship date needs adjustment — Jul 24-28 realistic instead of Jul 20?</strong> <span class="deadline">High Priority</span>
+                    <span class="note expanded">Materials arrive at Liten Jul 20. Liten hasn't confirmed yet. 1,200 bags can't be packed same day. Realistic: Jul 24-28. Sea freight 2-3 weeks. Still makes late Aug but no slack.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>What's the gift bag split between NY and LA?</strong> <span class="deadline">High Priority</span>
+                    <span class="note expanded">1,200 total. Is that 600/600? All for one event? VIP vs walk-in allocation? Affects PBD notification.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Who's planning non-merch event logistics?</strong> <span class="deadline">High Priority</span>
+                    <span class="note expanded">Venue, guest list, staffing, activations, content capture, run of show — none tracked yet. 6 weeks out is already tight.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Who owns editor sourcing?</strong> <span class="deadline">Medium Priority</span>
+                    <span class="note expanded">Broke at every event. Is it Forge going forward? PH-based editors? Someone else? Dione can manage them — but who finds them?</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>What's the content turnaround expectation?</strong> <span class="deadline">Medium Priority</span>
+                    <span class="note expanded">First edits within 48 hours? Full content package within 2 weeks? Need a number so editors can be held to it.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Will you fill the Creative Direction Brief before planning starts?</strong> <span class="deadline">Per Event</span>
+                    <span class="note expanded">15-min doc. Sets brand mood, references, approval rules. Gives Dione a clear lane to run without checking every decision. <a href="https://docs.google.com/spreadsheets/d/11bydOZG18z9VSszN5K3Hk7LGNhobfpIrn4Af_cbNlf0/edit" target="_blank" style="color:var(--pink);">See template</a></span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Does "first approval = green light" carry across events?</strong> <span class="deadline">Per Event</span>
+                    <span class="note expanded">If a poster style is approved for London, can it be reused for the next event? Or fresh approval each time?</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Who enforces design freeze when Rahul asks for something after?</strong> <span class="deadline">Per Event</span>
+                    <span class="note expanded">Does Momo hold the line? Or is it "Rahul overrides freeze"?</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="category" style="background: #FFF1F2; border-color: #FDA4AF;">
+            <h3 style="color: #BE123C;">Ops + Budget (Momo)</h3>
+            <ul class="checklist">
+                <li onclick="toggleCheck(this)"><strong>What are the exact event dates for NY and LA?</strong> <span class="deadline">High Priority</span>
+                    <span class="note expanded">Currently working off "end of August." Every logistics decision depends on confirmed dates.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Gift bag plan: 1,200 bags (600 Lem / 300 Avo / 300 Berri). Budget approval needed for factory packing + GPS shipping + materials.</strong> <span class="deadline">High Priority</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>What happens to the 1,800 extra plushies?</strong> <span class="deadline">Medium Priority</span>
+                    <span class="note expanded">3,000 ordered from Kings, only 1,200 for gift bags. Store at Portless for selling? Split between events? Kings needs to know where to ship.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Who sets the event budget and approves it?</strong> <span class="deadline">Medium Priority</span>
+                    <span class="note expanded">Andrea tracks it. But who decides how much to spend and approves before spending starts?</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>For non-London events, who takes Rachana's logistics role?</strong> <span class="deadline">Medium Priority</span>
+                    <span class="note expanded">Owner assignments need to flex per location.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Is Britt permanent or per-event?</strong> <span class="deadline">Medium Priority</span>
+                    <span class="note expanded">Playbook relies on her for talent sourcing + F&B vendors + local relationships. If she's not at the next event, those items have no owner.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>What's the spending threshold for on-ground decisions?</strong> <span class="deadline">Per Event</span>
+                    <span class="note expanded">London was "under 200, just get it." Is that standard? Does it change per event or per currency?</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="category" style="background: #FFF1F2; border-color: #FDA4AF;">
+            <h3 style="color: #BE123C;">Ops + Shipping (Rachana)</h3>
+            <ul class="checklist">
+                <li onclick="toggleCheck(this)"><strong>Can you confirm what Portless China actually received?</strong> <span class="deadline">High Priority</span>
+                    <span class="note expanded">Discrepancy flagged Jul 14 — sent 750 caps, 1,000 tees, 1,400 tennis balls but received count didn't match. Is this resolved?</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>What's the ideal lead time for notifying Portless/PBD of incoming shipments?</strong> <span class="deadline">Medium Priority</span>
+                    <span class="note expanded">How far in advance does PBD need to know? 1 week? 2 weeks? Helps build realistic timelines.</span>
+                </li>
+                <li onclick="toggleCheck(this)"><strong>Should we formalize the SKU process as a written SOP?</strong> <span class="deadline">Medium Priority</span>
+                    <span class="note expanded">The process was walked through clearly on Jul 14 (Shopify unlisted -> tell Portless -> sync -> then ship). Worth formalizing so it doesn't need to be re-taught each time.</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div><!-- end .container -->
+</div><!-- end #tab-reference -->
+
+<footer>
+    Built from team debriefs and past event learnings: Miami Swim Week, London Activation, Mandrake Dinner, US Event Prep
+    <br><br>
+    <strong>Template v5.2</strong> &mdash; July 2026 &mdash; Universal Core + 5 Event-Type Modules + Shipping &amp; Factory SOPs
+</footer>
+
+<script>
+// ========== TAB SWITCHING ==========
+function switchTab(tabName, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+    btn.classList.add('active');
+
+    // Show correct jump nav
+    const isChecklist = tabName === 'checklist';
+    document.getElementById('jumpNavChecklist').style.display = isChecklist ? '' : 'none';
+    document.getElementById('jumpNavReference').style.display = isChecklist ? 'none' : '';
+    document.getElementById('niceToggleBar').style.display = isChecklist ? '' : 'none';
+
+    updateProgress();
+}
+
+// ========== JUMP NAV ==========
+function jumpTo(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const offset = 80;
+    const y = el.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+}
+
+// Scroll spy
+const phaseIds = ['phase1','phase2','phase3','phase4','phase5','phase6','phaseTemplates','phaseRules','phaseAuthority','phaseQuestions'];
+window.addEventListener('scroll', () => {
+    let current = '';
+    for (const id of phaseIds) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= 120) current = id;
+    }
+    document.querySelectorAll('.jump-btn').forEach(btn => {
+        const match = btn.getAttribute('onclick').match(/'([^']+)'/);
+        if (match && match[1] === current) {
+            btn.classList.add('active-phase');
+        } else {
+            btn.classList.remove('active-phase');
+        }
+    });
+});
+
+// ========== NOTE TOGGLE ==========
+function toggleNote(itemTextEl) {
+    const note = itemTextEl.querySelector('.note');
+    const indicator = itemTextEl.querySelector('.note-indicator');
+    if (!note) return;
+    const isExpanded = note.classList.toggle('expanded');
+    if (indicator) indicator.innerHTML = isExpanded ? '&#9660;' : '&#9658;';
+}
+
+// ========== CHECKBOX TOGGLE ==========
+// Clicking the li::before pseudo-element (checkbox area) toggles check
+// We detect click position: if within first 28px from left, toggle check
+document.addEventListener('click', function(e) {
+    const li = e.target.closest('.checklist li');
+    if (!li) return;
+
+    // Check if click is in the checkbox area (left 32px)
+    const rect = li.getBoundingClientRect();
+    const relX = e.clientX - rect.left;
+    if (relX <= 32) {
+        e.stopPropagation();
+        toggleCheck(li);
+        return;
+    }
+
+    // Otherwise, if clicked on item-text, toggle the note
+    const itemText = e.target.closest('.item-text');
+    if (itemText) {
+        toggleNote(itemText);
+    }
+});
+
+// Reference tab items use onclick directly
+function toggleCheck(li) {
+    li.classList.toggle('checked');
+    updateProgress();
+    saveCurrentState();
+}
+
+// ========== PERSON FILTER ==========
+let activePersons = new Set();
+
+function togglePersonFilter(pill) {
+    const person = pill.dataset.person;
+
+    if (person === 'all') {
+        activePersons.clear();
+        document.querySelectorAll('.person-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+    } else {
+        // Deactivate "All"
+        document.querySelector('.person-pill[data-person="all"]').classList.remove('active');
+
+        if (activePersons.has(person)) {
+            activePersons.delete(person);
+            pill.classList.remove('active');
+        } else {
+            activePersons.add(person);
+            pill.classList.add('active');
+        }
+
+        // If nothing selected, revert to All
+        if (activePersons.size === 0) {
+            document.querySelector('.person-pill[data-person="all"]').classList.add('active');
+        }
+    }
+
+    applyPersonFilter();
+    updateProgress();
+}
+
+function applyPersonFilter() {
+    const showAll = activePersons.size === 0;
+
+    document.querySelectorAll('#tab-checklist .checklist li').forEach(li => {
+        // Risk items always show
+        if (li.classList.contains('has-risk')) {
+            li.classList.remove('person-hidden');
+            return;
+        }
+
+        if (showAll) {
+            li.classList.remove('person-hidden');
+            return;
+        }
+
+        const ownersAttr = (li.dataset.owners || '').trim();
+
+        // No owner = always show
+        if (!ownersAttr) {
+            li.classList.remove('person-hidden');
+            return;
+        }
+
+        const owners = ownersAttr.split(/\s+/);
+        const match = owners.some(o => activePersons.has(o));
+        if (match) {
+            li.classList.remove('person-hidden');
+        } else {
+            li.classList.add('person-hidden');
+        }
+    });
+}
+
+// ========== NICE-TO-HAVE TOGGLE (USER-DRIVEN) ==========
+let niceVisible = false;
+
+function getUserNiceItems() {
+    // Returns Set of item indices marked nice by the user for the current event
+    if (!currentEventId) return new Set();
+    const events = getEvents();
+    const evt = events[currentEventId];
+    return new Set(evt && evt.niceItems ? evt.niceItems : []);
+}
+
+function saveUserNiceItems(niceSet) {
+    if (!currentEventId) return;
+    const events = getEvents();
+    if (!events[currentEventId]) return;
+    events[currentEventId].niceItems = Array.from(niceSet);
+    saveEvents(events);
+}
+
+function getItemIndex(li) {
+    return Array.from(document.querySelectorAll('.checklist li')).indexOf(li);
+}
+
+function applyNiceItems() {
+    const niceSet = getUserNiceItems();
+    document.querySelectorAll('#tab-checklist .checklist li').forEach((li, idx) => {
+        const isNice = niceSet.has(idx);
+        // Toggle class
+        li.classList.toggle('nice-item', isNice);
+        // Add/remove OPTIONAL tag
+        let tag = li.querySelector('.nice-tag');
+        if (isNice && !tag) {
+            tag = document.createElement('span');
+            tag.className = 'nice-tag';
+            tag.textContent = 'Optional';
+            const itemText = li.querySelector('.item-text');
+            if (itemText) {
+                itemText.appendChild(tag);
+            } else {
+                li.appendChild(tag);
+            }
+        } else if (!isNice && tag) {
+            tag.remove();
+        }
+        // Apply hidden state
+        if (isNice && !niceVisible) {
+            li.classList.add('nice-hidden');
+        } else {
+            li.classList.remove('nice-hidden');
+        }
+    });
+    updateNiceCount();
+    updateProgress();
+}
+
+function markItemNice(li, isNice) {
+    if (!currentEventId) {
+        alert('Create or load an event first to save tier preferences.');
+        return;
+    }
+    const idx = getItemIndex(li);
+    if (idx === -1) return;
+    const niceSet = getUserNiceItems();
+    if (isNice) {
+        niceSet.add(idx);
+    } else {
+        niceSet.delete(idx);
+    }
+    saveUserNiceItems(niceSet);
+    applyNiceItems();
+    showToast(isNice ? 'Marked optional' : 'Marked must-do');
+}
+
+function countNiceItems() {
+    return document.querySelectorAll('#tab-checklist .checklist li.nice-item').length;
+}
+
+function updateNiceCount() {
+    const total = countNiceItems();
+    const countEl = document.getElementById('niceCount');
+    if (total === 0) {
+        countEl.textContent = '(right-click any item to mark optional)';
+    } else if (niceVisible) {
+        countEl.textContent = '(' + total + ' optional shown)';
+    } else {
+        countEl.textContent = '(' + total + ' optional hidden)';
+    }
+}
+
+function toggleNiceToHaves() {
+    niceVisible = !niceVisible;
+    const btn = document.getElementById('niceToggleBtn');
+
+    document.querySelectorAll('#tab-checklist .checklist li.nice-item').forEach(li => {
+        if (niceVisible) {
+            li.classList.remove('nice-hidden');
+        } else {
+            li.classList.add('nice-hidden');
+        }
+    });
+
+    btn.textContent = niceVisible ? 'Hide optional items' : 'Show optional items';
+    btn.classList.toggle('active', niceVisible);
+    updateNiceCount();
+    updateProgress();
+}
+
+function initNiceItems() {
+    // Add tier buttons to all checklist items in the checklist tab
+    document.querySelectorAll('#tab-checklist .checklist li').forEach(li => {
+        if (li.querySelector('.tier-btn')) return; // already added
+        const btn = document.createElement('button');
+        btn.className = 'tier-btn';
+        btn.innerHTML = '&#8943;'; // vertical ellipsis
+        btn.title = 'Mark as optional or must-do';
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (!currentEventId) {
+                alert('Create an event first to tag items');
+                return;
+            }
+            showContextMenu(e, li);
+        });
+        li.style.position = 'relative';
+        li.style.paddingRight = '36px';
+        li.appendChild(btn);
+    });
+    applyNiceItems();
+}
+
+// ========== CUSTOM CONTEXT MENU ==========
+let contextMenu = null;
+let longPressTimer = null;
+let longPressTarget = null;
+
+function showContextMenu(e, li) {
+    hideContextMenu();
+    const isNice = li.classList.contains('nice-item');
+
+    contextMenu = document.createElement('div');
+    contextMenu.className = 'custom-context-menu';
+
+    if (!isNice) {
+        const btn = document.createElement('button');
+        btn.className = 'mark-nice';
+        btn.textContent = 'Mark as optional (nice-to-have)';
+        btn.onclick = () => { markItemNice(li, true); hideContextMenu(); };
+        contextMenu.appendChild(btn);
+    } else {
+        const btn = document.createElement('button');
+        btn.className = 'mark-must';
+        btn.textContent = 'Mark as must-do';
+        btn.onclick = () => { markItemNice(li, false); hideContextMenu(); };
+        contextMenu.appendChild(btn);
+    }
+
+    document.body.appendChild(contextMenu);
+
+    // Position
+    const x = e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : 100);
+    const y = e.clientY !== undefined ? e.clientY : (e.touches ? e.touches[0].clientY : 100);
+    const menuW = 220, menuH = 50;
+    const left = Math.min(x, window.innerWidth - menuW - 8);
+    const top = Math.min(y, window.innerHeight - menuH - 8);
+    contextMenu.style.left = left + 'px';
+    contextMenu.style.top = (top + window.scrollY) + 'px';
+}
+
+function hideContextMenu() {
+    if (contextMenu) { contextMenu.remove(); contextMenu = null; }
+}
+
+// Right-click on checklist items
+document.addEventListener('contextmenu', function(e) {
+    const li = e.target.closest('#tab-checklist .checklist li');
+    if (!li) return;
+    if (!currentEventId) {
+        // Still allow right-click but show a hint
+        e.preventDefault();
+        hideContextMenu();
+        contextMenu = document.createElement('div');
+        contextMenu.className = 'custom-context-menu';
+        const hint = document.createElement('button');
+        hint.textContent = 'Create an event first to tag items';
+        hint.style.color = 'var(--gray-500)';
+        hint.style.cursor = 'default';
+        contextMenu.appendChild(hint);
+        document.body.appendChild(contextMenu);
+        contextMenu.style.left = e.clientX + 'px';
+        contextMenu.style.top = (e.clientY + window.scrollY) + 'px';
+        setTimeout(hideContextMenu, 2000);
+        return;
+    }
+    e.preventDefault();
+    showContextMenu(e, li);
+});
+
+// Long-press on mobile
+document.addEventListener('touchstart', function(e) {
+    const li = e.target.closest('#tab-checklist .checklist li');
+    if (!li) return;
+    longPressTarget = li;
+    longPressTimer = setTimeout(() => {
+        if (longPressTarget) showContextMenu(e, longPressTarget);
+    }, 600);
+}, { passive: true });
+
+document.addEventListener('touchend', function() {
+    clearTimeout(longPressTimer);
+    longPressTarget = null;
+});
+
+document.addEventListener('touchmove', function() {
+    clearTimeout(longPressTimer);
+    longPressTarget = null;
+}, { passive: true });
+
+// Close context menu on outside click
+document.addEventListener('click', function(e) {
+    if (contextMenu && !contextMenu.contains(e.target)) hideContextMenu();
+});
+
+// ========== EVENT PERSISTENCE ==========
+let currentEventId = null;
+
+function getEvents() {
+    return JSON.parse(localStorage.getItem('nancy-events') || '{}');
+}
+
+function saveEvents(events) {
+    localStorage.setItem('nancy-events', JSON.stringify(events));
+}
+
+function refreshEventSelect() {
+    const sel = document.getElementById('eventSelect');
+    const events = getEvents();
+    sel.innerHTML = '<option value="">-- Select or create --</option>';
+    Object.keys(events).sort((a, b) => events[b].created - events[a].created).forEach(id => {
+        const opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = events[id].name;
+        if (id === currentEventId) opt.selected = true;
+        sel.appendChild(opt);
+    });
+    document.getElementById('deleteBtn').style.display = currentEventId ? '' : 'none';
+}
+
+function createEvent() {
+    const input = document.getElementById('eventNameInput');
+    const name = input.value.trim();
+    if (!name) { input.focus(); return; }
+    const id = 'evt-' + Date.now();
+    const events = getEvents();
+    events[id] = { name, created: Date.now(), checks: [], modules: [], niceItems: [] };
+    saveEvents(events);
+    input.value = '';
+    document.querySelectorAll('.checklist li.checked').forEach(li => li.classList.remove('checked'));
+    document.querySelectorAll('.module-pill.active').forEach(p => {
+        p.classList.remove('active');
+        const mod = p.dataset.module;
+        document.querySelectorAll('.module-only[data-module="' + mod + '"]').forEach(el => el.classList.remove('visible'));
+    });
+    currentEventId = id;
+    refreshEventSelect();
+    applyNiceItems();
+    updateProgress();
+    showToast('Event created');
+}
+
+function loadEvent(id) {
+    if (!id) {
+        currentEventId = null;
+        document.querySelectorAll('.checklist li.checked').forEach(li => li.classList.remove('checked'));
+        document.querySelectorAll('.module-pill.active').forEach(p => {
+            p.classList.remove('active');
+            const mod = p.dataset.module;
+            document.querySelectorAll('.module-only[data-module="' + mod + '"]').forEach(el => el.classList.remove('visible'));
+        });
+        document.getElementById('deleteBtn').style.display = 'none';
+        updateProgress();
+        return;
+    }
+    const events = getEvents();
+    const evt = events[id];
+    if (!evt) return;
+    currentEventId = id;
+
+    document.querySelectorAll('.checklist li.checked').forEach(li => li.classList.remove('checked'));
+    document.querySelectorAll('.module-pill.active').forEach(p => {
+        p.classList.remove('active');
+        const mod = p.dataset.module;
+        document.querySelectorAll('.module-only[data-module="' + mod + '"]').forEach(el => el.classList.remove('visible'));
+    });
+
+    if (evt.modules) {
+        evt.modules.forEach(mod => {
+            const pill = document.querySelector('.module-pill[data-module="' + mod + '"]');
+            if (pill) {
+                pill.classList.add('active');
+                document.querySelectorAll('.module-only[data-module="' + mod + '"]').forEach(el => el.classList.add('visible'));
+            }
+        });
+    }
+
+    if (evt.checks) {
+        const allItems = document.querySelectorAll('.checklist li');
+        evt.checks.forEach(idx => {
+            if (allItems[idx]) allItems[idx].classList.add('checked');
+        });
+    }
+
+    document.getElementById('deleteBtn').style.display = '';
+    refreshEventSelect();
+    applyNiceItems();
+    updateProgress();
+    showToast('Loaded: ' + evt.name);
+}
+
+function saveCurrentState() {
+    if (!currentEventId) return;
+    const events = getEvents();
+    if (!events[currentEventId]) return;
+
+    const checks = [];
+    document.querySelectorAll('.checklist li').forEach((li, idx) => {
+        if (li.classList.contains('checked')) checks.push(idx);
+    });
+
+    const modules = [];
+    document.querySelectorAll('.module-pill.active').forEach(p => {
+        modules.push(p.dataset.module);
+    });
+
+    events[currentEventId].checks = checks;
+    events[currentEventId].modules = modules;
+    // niceItems is saved separately via saveUserNiceItems; preserve existing value
+    events[currentEventId].lastUpdated = Date.now();
+    saveEvents(events);
+    showToast('Saved');
+}
+
+function deleteEvent() {
+    if (!currentEventId) return;
+    const events = getEvents();
+    const name = events[currentEventId]?.name || 'this event';
+    if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+    delete events[currentEventId];
+    saveEvents(events);
+    currentEventId = null;
+    document.querySelectorAll('.checklist li.checked').forEach(li => li.classList.remove('checked'));
+    document.querySelectorAll('.module-pill.active').forEach(p => {
+        p.classList.remove('active');
+        const mod = p.dataset.module;
+        document.querySelectorAll('.module-only[data-module="' + mod + '"]').forEach(el => el.classList.remove('visible'));
+    });
+    refreshEventSelect();
+    updateProgress();
+    showToast('Event deleted');
+}
+
+function exportProgress() {
+    const events = getEvents();
+    const evtName = currentEventId && events[currentEventId] ? events[currentEventId].name : 'Untitled';
+    const rows = [['Phase','Category','Item','Status','Owner','Module','Risk','Notes']];
+    document.querySelectorAll('.phase').forEach(phase => {
+        const phaseTag = phase.querySelector('.phase-tag');
+        if (!phaseTag) return;
+        const phaseName = phaseTag.textContent.trim();
+        phase.querySelectorAll('.category').forEach(cat => {
+            const isModuleCat = cat.classList.contains('module-only');
+            const isVisible = !isModuleCat || cat.classList.contains('visible');
+            if (!isVisible) return;
+            const catH3 = cat.querySelector('h3');
+            if (!catH3) return;
+            const catName = catH3.textContent.trim();
+            const mod = cat.dataset ? (cat.dataset.module || 'Core') : 'Core';
+            cat.querySelectorAll('.checklist li').forEach(li => {
+                const clone = li.cloneNode(true);
+                clone.querySelectorAll('.owner, .risk, .note, .note-indicator').forEach(el => el.remove());
+                const item = clone.textContent.trim();
+                const status = li.classList.contains('checked') ? 'Done' : 'Not Done';
+                const ownerEl = li.querySelector('.owner');
+                const owner = ownerEl ? ownerEl.textContent.trim() : '';
+                const riskEl = li.querySelector('.risk');
+                const risk = riskEl ? 'HIGH' : '';
+                const noteEl = li.querySelector('.note');
+                const note = noteEl ? noteEl.textContent.trim() : '';
+                rows.push([phaseName, catName, item, status, owner, mod === 'Core' ? 'Core' : mod, risk, note]);
+            });
+        });
+    });
+    const csvContent = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Nancy_Event_Progress_' + evtName.replace(/[^a-zA-Z0-9]/g, '_') + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('savedToast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1500);
+}
+
+// ========== MODULE TOGGLE ==========
+function toggleModule(pill) {
+    pill.classList.toggle('active');
+    const mod = pill.dataset.module;
+    document.querySelectorAll('.module-only[data-module="' + mod + '"]').forEach(el => {
+        el.classList.toggle('visible');
+    });
+    updateProgress();
+    saveCurrentState();
+}
+
+// ========== PROGRESS ==========
+function updateProgress() {
+    let total = 0, done = 0;
+    document.querySelectorAll('.category').forEach(cat => {
+        // Skip hidden module-only cats in checklist tab
+        const isModuleCat = cat.classList.contains('module-only');
+        const isVisible = !isModuleCat || cat.classList.contains('visible');
+        if (!isVisible) return;
+
+        // Only count items in the active tab
+        const inChecklist = cat.closest('#tab-checklist');
+        const inReference = cat.closest('#tab-reference');
+        const checklistActive = document.getElementById('tab-checklist').classList.contains('active');
+        if (inChecklist && !checklistActive) return;
+        if (inReference && checklistActive) return;
+
+        cat.querySelectorAll('.checklist li').forEach(li => {
+            // Don't count person-hidden or nice-hidden items
+            if (li.classList.contains('person-hidden')) return;
+            if (li.classList.contains('nice-hidden')) return;
+            total++;
+            if (li.classList.contains('checked')) done++;
+        });
+    });
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = done + ' / ' + total + ' items (' + pct + '%)';
+}
+
+// ========== MODULE TAGS ==========
+const moduleLabels = {
+    dinner: 'Dinner',
+    booth: 'Booth',
+    launch: 'Launch',
+    popup: 'Pop-Up',
+    multiday: 'Multi-Day'
+};
+document.querySelectorAll('.category.module-only').forEach(cat => {
+    const mod = cat.dataset.module;
+    const label = moduleLabels[mod] || mod;
+    const h3 = cat.querySelector('h3');
+    if (h3) {
+        const tag = document.createElement('span');
+        tag.className = 'module-tag-inline';
+        tag.textContent = label;
+        h3.appendChild(tag);
+    }
+});
+
+// ========== INIT ==========
+initNiceItems();
+refreshEventSelect();
+
+const initEvents = getEvents();
+const sorted = Object.entries(initEvents).sort((a, b) => (b[1].lastUpdated || b[1].created) - (a[1].lastUpdated || a[1].created));
+if (sorted.length > 0) {
+    loadEvent(sorted[0][0]);
+} else {
+    updateProgress();
+}
+
+// ========== TEMPLATES ==========
+const templates = {
+'master-event-brief': {
+    filename: 'Nancy_Master_Event_Brief.csv',
+    data: `Section,Field,Value,Notes
+Event Overview,Event Name,,
+Event Overview,Event Type,"(Pop-Up / Dinner / Booth / Launch / Multi-Day)",
+Event Overview,Primary Objective,"(Brand Awareness / Content Capture / Sales / Partnerships / Press)",
+Event Overview,Start Date,,
+Event Overview,End Date,,
+Event Overview,Location / Venue,,
+Event Overview,Expected Attendance,,
+Event Overview,Target Audience,,
+Success Metrics,Content Pieces Target,,
+Success Metrics,Social Engagement Target,,
+Success Metrics,Press Hits Target,,
+Success Metrics,Leads / Sign-ups Target,,
+Success Metrics,Other Metric,,
+Team,Creative / Design Lead,,
+Team,Logistics / Production Lead,,
+Team,Content / Social Lead,,
+Team,Talent / Guest Lead,,
+Team,Finance / Admin Lead,,
+Team,PR / Press Lead,,
+Team,Event Agency / Partner,,
+Team,On-Site Videographer,,
+Team,On-Site Editor(s),,
+Team,Volunteer Count Target,,
+Budget,Total Budget,,
+Budget,Venue Cost,,
+Budget,F&B Cost,,
+Budget,Design / Print Cost,,
+Budget,Talent / Travel Cost,,
+Budget,Furniture / Rentals,,
+Budget,Staffing / Agency,,
+Budget,Contingency (10%),,
+Key Dates,Design Freeze Date,,"No new requests after this date"
+Key Dates,Vendor Lock Date,,"All vendors confirmed"
+Key Dates,Print Deadline,,"Artwork due 48hrs before this"
+Key Dates,Run Sheet Due Date,,"7 days before event"
+Key Dates,Final Brief Date,,"48 hours before event"
+Key Dates,Retro Meeting Date,,"Within 1 week post-event"`
+},
+'budget-tracker': {
+    filename: 'Nancy_Budget_Tracker.csv',
+    data: `Category,Item,Vendor,Estimated Cost,Actual Cost,Currency,Paid (Y/N),Payment Method,Invoice Sent to AP,Receipt Attached,Notes
+Venue,Venue hire,,,,GBP,,,,
+Venue,Extra setup time,,,,GBP,,,,
+Venue,Storage unit,,,,GBP,,,,
+F&B,Bar service + drinks,,,,GBP,,,,
+F&B,Food / catering,,,,GBP,,,,
+F&B,Branded popsicles / gelato,,,,GBP,,,,
+F&B,Staff food + drinks,,,,GBP,,,,
+Design & Print,Signage printing,,,,GBP,,,,
+Design & Print,Stickers + labels,,,,GBP,,,,
+Design & Print,Posters (A3/A1),,,,GBP,,,,
+Design & Print,Wristbands / tokens,,,,GBP,,,,
+Furniture & Props,Sofa rental,,,,GBP,,,,
+Furniture & Props,Table rental,,,,GBP,,,,
+Furniture & Props,Flower arrangements,,,,GBP,,,,
+Furniture & Props,Set build,,,,GBP,,,,
+Talent & Travel,Flights,,,,GBP,,,,
+Talent & Travel,Hotel,,,,GBP,,,,
+Talent & Travel,Per diem,,,,GBP,,,,
+Talent & Travel,MUA / Styling,,,,GBP,,,,
+Talent & Travel,Airport transfers,,,,GBP,,,,
+Staffing,Event agency,,,,GBP,,,,
+Staffing,Games master / host,,,,GBP,,,,
+Staffing,Security,,,,GBP,,,,
+Staffing,Videographer,,,,GBP,,,,
+Staffing,Editor(s),,,,GBP,,,,
+Tech & AV,Sound system,,,,GBP,,,,
+Tech & AV,Projector,,,,GBP,,,,
+Tech & AV,Touch screens,,,,GBP,,,,
+Misc,Transport / delivery,,,,GBP,,,,
+Misc,Parking permits,,,,GBP,,,,
+Misc,Event insurance,,,,GBP,,,,
+Misc,Contingency,,,,GBP,,,,
+,,TOTAL ESTIMATED,0,TOTAL ACTUAL,0,,,`
+},
+'design-asset-tracker': {
+    filename: 'Nancy_Design_Asset_Tracker.csv',
+    data: `Item,Size,Quantity,Material,.ai File Link,Printer / Vendor,Artwork Deadline,Print Deadline,Status,Approved By,Notes
+Front entrance signage,A1,,Foam board,,,,,"Not Started",,
+Welcome easel poster,A3,,Print,,,,,"Not Started",,
+Photo wall backdrop,4m x 2m,,Fabric / vinyl,,,,,"Not Started",,
+Circle mirror stickers (large),50cm,,Die-cut sticker,,,,,"Not Started",,
+Circle mirror stickers (small),35cm,,Die-cut sticker,,,,,"Not Started",,
+Tray design,60x40x10cm,,Sticker wrap,,,,,"Not Started",,
+Bus stop mirror graphics,TBD,,Convex / Dibond,,,,,"Not Started",,
+Branded cups,TBD,,Sticker,,,,,"Not Started",,
+Pickleball board wrap,TBD,,Full sticker,,,,,"Not Started",,
+Bar menu,A4,,Print,,,,,"Not Started",,
+Product labels,2 inch,,Die-cut sticker,,,,,"Not Started",,
+Logo die-cut stickers,2.5cm,,Die-cut sticker,,,,,"Not Started",,
+Wristbands,Standard,,,,,,,"Not Started",,
+Social media templates,1080x1920,,Digital,,,,,"Not Started",,
+Projector loop,1920x1080,,Digital / video,,,,,"Not Started",,
+Game screen (Whack-a-Lemon),TBD,,Digital,,,,,"Not Started",,
+DESIGN FREEZE DATE:,,,,,,DATE HERE,,,"NO NEW REQUESTS AFTER THIS DATE"`
+},
+'guest-rsvp-tracker': {
+    filename: 'Nancy_Guest_RSVP_Tracker.csv',
+    data: `Name,Email,Instagram Handle,Type (Influencer/Press/Partner/VIP/Team),Invited By,RSVP Status (Confirmed/Pending/Declined),+1 Name,+1 Status,Dietary Requirements,Arrival Time,Seat Assignment,Gift Bag (Y/N),Notes
+,,,Influencer,,Pending,,,,,,,
+,,,Press,,Pending,,,,,,,
+,,,Partner,,Pending,,,,,,,
+,,,VIP,,Pending,,,,,,,
+,,,Team,,Confirmed,,,,,,,
+,,,,,,,,,,,,
+TOTAL INVITED,0,,,,,,,,,,
+TOTAL CONFIRMED,0,,,,,,,,,,
+CAPACITY,0,,,,,,,,,,
+REMAINING SPOTS,0,,,,,,,,,,`
+},
+'inventory-list': {
+    filename: 'Nancy_Inventory_List.csv',
+    data: `Category,Item,SKU / Variant,Quantity,Box Count,Weight (kg),Ship Method,Tracking Number,Expected Arrival,Received (Y/N),Storage Location,Use (Demo/Gift/Display/Sale),Assigned To Station,Notes
+Toys,LEM,,,,,,,,,,,,
+Toys,Berri,,,,,,,,,,,,
+Toys,Avo,,,,,,,,,,,,
+Accessories,Lube,,,,,,,,,,,,
+Accessories,Massage oil,,,,,,,,,,,,
+Accessories,Jelly perfumes,,,,,,,,,,,,
+Accessories,Waterproof blankets,,,,,,,,,,,,
+Biird,Anii,,,,,,,,,,,,
+Biird,Kalii,,,,,,,,,,,,
+Merch,Pins (Lem),,,,,,,,,,,,
+Merch,Pins (Berri),,,,,,,,,,,,
+Merch,Pins (Avo),,,,,,,,,,,,
+Merch,Tote bags,,,,,,,,,,,,
+Merch,Shoulder bags,,,,,,,,,,,,
+Merch,T-shirts,,,,,,,,,,,,
+Merch,Caps / hats,,,,,,,,,,,,
+Merch,Head + wrist bands,,,,,,,,,,,,
+Merch,Tennis balls,,,,,,,,,,,,
+Collabs,Oh Collective chocolates,,,,,,,,,,,,
+Props,Branded cups,,,,,,,,,,,,
+Props,Sticker packs,,,,,,,,,,,,
+Props,Gift bags (transparent),,,,,,,,,,,,
+Props,LEM bluetooth speaker,,,,,,,,,,,,
+,,TOTAL ITEMS,0,TOTAL BOXES,0,,,,,,,,`
+},
+'run-sheet': {
+    filename: 'Nancy_Run_Sheet.csv',
+    data: `Time,Duration,Activity / Moment,Location / Station,Who Is Responsible,What Is Needed,Content Capture (Y/N),Notes
+06:00,30 min,Team arrival + setup begins,Venue entrance,Production lead,"Keys / access codes",,
+06:30,90 min,Set build + prop placement,Main floor,Set builder + team,"All print items + props",,
+06:30,90 min,Florist setup,Tables / entrance,Florist,"Flowers + vessels",,
+07:30,30 min,AV + tech setup,Main floor,Tech lead,"Projector + speakers + games",,
+07:30,30 min,F&B setup,Bar area,Bar vendor,"Drinks + cups + ice",,
+08:00,30 min,Product display setup,Demo stations,Product lead,"All inventory items",,
+08:15,15 min,Content station setup,Side area,Content lead,"Laptops + chargers + drives",,
+08:30,15 min,Final walkthrough,All areas,Creative lead + event lead,"Checklist",,
+08:45,15 min,Team huddle (roles + schedule),Meeting point,Event lead,"Printed run sheets + call sheets",Y,
+09:00,,Doors open / event starts,Entrance,Door team,"Wristbands + guest list",,
+09:00,60 min,[Activity block 1],TBD,TBD,TBD,Y,
+10:00,60 min,[Activity block 2],TBD,TBD,TBD,Y,
+11:00,30 min,Restock check,All stations,Floater,"Backup supplies",,
+11:30,60 min,[Activity block 3],TBD,TBD,TBD,Y,
+12:30,30 min,Staff lunch rotation,Back area,,Food for team,,
+13:00,120 min,[Activity block 4 / peak hours],TBD,TBD,TBD,Y,
+15:00,,Celebrity / VIP arrival,Side entrance,VIP liaison,"Security + photographer",Y,Key moment
+15:00,120 min,[Celebrity activity block],TBD,TBD,TBD,Y,
+17:00,,Celebrity exit (front for paps?),Front entrance,VIP liaison,"Press + photographer",Y,Plan intentionally
+17:00,,Event wind-down,All areas,Event lead,,,
+18:00,,Doors close,,Door team,,,
+18:00,120 min,Teardown begins,All areas,Production lead,"Boxes + transport",,
+20:00,,Venue cleared,,Event lead,"Check venue condition",,`
+},
+'call-sheet': {
+    filename: 'Nancy_Call_Sheet.csv',
+    data: `CALL SHEET - [EVENT NAME] - [DATE],,,,
+,,,,
+PERSON NAME:,,,,
+ROLE:,,,,
+PHONE:,,,,
+REPORTS TO:,,,,
+,,,,
+Time,Location,Task / Activity,What You Need,Notes
+06:00,Venue entrance,Arrive and check in with event lead,Printed run sheet,
+06:15,Main floor,Help with [specific setup task],,
+08:45,Meeting point,Team huddle,,
+09:00,[Your station],[Your primary role during event],,
+11:00,[Your station],Continue + restock check,,
+12:30,Back area,Lunch break (30 min),,
+13:00,[Your station],Resume,,
+15:00,[Location],Celebrity arrival support,,
+17:00,[Your station],Event wind-down,,
+18:00,All areas,Teardown support,,
+,,,,
+ESCALATION:,,,,
+"If something goes wrong, contact:",,,,
+1. [Event Lead Name] - [Phone],,,,
+2. [Founder Name] - [Phone],,,,
+,,,,
+SPENDING AUTHORITY:,,,,
+"Under [amount]: just get it. Over [amount]: call [Name] for approval.",,,,`
+},
+'content-brief': {
+    filename: 'Nancy_Content_Brief.csv',
+    data: `Section,Detail,Notes
+Event,[Event Name + Date],
+Content Lead,[Name],
+Editor(s),[Name(s)],
+Upload Drive,[Google Drive link for RAW footage],
+Edited Drive,[Google Drive link for EDITED files],
+,,
+DELIVERABLES,,
+Deliverable 1,Highlights reel (60-90 sec),"Due: [date]. Reference: [link to example]"
+Deliverable 2,Best reaction clips (5-8 x 15sec reels),"Due: [date]. Reference: [link to example]"
+Deliverable 3,Celebrity/VIP moment clips (3-5 clips),"Due: [date]. Reference: [link to example]"
+Deliverable 4,BTS montage (30-60 sec),"Due: [date]. Reference: [link to example]"
+Deliverable 5,Interview clips with captions (per interview),"Due: [date]. Reference: [link to example]"
+Deliverable 6,Product demo clips (per product),"Due: [date]. Reference: [link to example]"
+Deliverable 7,Feed-ready stills (10-15 edited photos),"Due: [date]"
+,,
+FORMAT SPECS,,
+Reels / Stories,1080 x 1920 (9:16),
+Feed posts,1080 x 1350 (4:5),
+Video format,MP4 H.264,
+,,
+WHAT GOOD LOOKS LIKE,,
+Reference 1,[Link to example post/reel],"Note what's good about it"
+Reference 2,[Link to example post/reel],"Note what's good about it"
+Reference 3,[Link to example post/reel],"Note what's good about it"
+,,
+WHAT TO AVOID,,
+Avoid 1,"Repeat interviews of same person",
+Avoid 2,"B-roll without edit (stories only)",
+Avoid 3,"Low energy / empty venue shots",
+,,
+TURNAROUND,,
+First edits due,[Date - typically 48hrs post-event],
+Review + feedback,[Date],
+Final versions due,[Date],
+Daily chase owner,[Name - typically Dione],`
+},
+'vendor-contact-sheet': {
+    filename: 'Nancy_Vendor_Contact_Sheet.csv',
+    data: `Vendor Name,Service,Contact Person,Phone,Email,Contract Signed (Y/N),Invoice Sent to AP (Y/N),Payment Status (Paid/Pending/Overdue),Payment Method,Amount,Delivery Date,Delivery Time,Delivery Address,Our Point of Contact,Performance Rating (1-5),Rehire (Y/N),Notes
+,Venue,,,,,,,,,,,,,,
+,Set build,,,,,,,,,,,,,,
+,Florist,,,,,,,,,,,,,,
+,Bar / drinks,,,,,,,,,,,,,,
+,F&B / catering,,,,,,,,,,,,,,
+,Printing,,,,,,,,,,,,,,
+,Furniture rental,,,,,,,,,,,,,,
+,Videographer,,,,,,,,,,,,,,
+,Editor(s),,,,,,,,,,,,,,
+,Sound / AV,,,,,,,,,,,,,,
+,Security,,,,,,,,,,,,,,
+,Games master / host,,,,,,,,,,,,,,
+,Transport / logistics,,,,,,,,,,,,,,
+,Truck / vehicle,,,,,,,,,,,,,,
+,Storage unit,,,,,,,,,,,,,,
+,MUA / styling,,,,,,,,,,,,,,`
+},
+'post-event-report': {
+    filename: 'Nancy_Post_Event_Report.csv',
+    data: `Section,Metric / Item,Value,Target,Notes
+Overview,Event Name,,,
+Overview,Date(s),,,
+Overview,Venue,,,
+Overview,Event Type,,,
+,,,,
+Attendance,Total attendance,,,
+Attendance,VIP / press count,,,
+Attendance,Volunteer count,,,
+Attendance,Staff count,,,
+,,,,
+Content,Total raw clips captured,,,
+Content,Total edited pieces delivered,,,
+Content,Reels published,,,
+Content,Stories published,,,
+Content,Feed posts published,,,
+Content,Press coverage pieces,,,
+,,,,
+Social Performance,Total reach (across platforms),,,
+Social Performance,Total engagement,,,
+Social Performance,New followers gained,,,
+Social Performance,Top performing post (link),,,
+Social Performance,UGC pieces captured,,,
+,,,,
+Budget,Total estimated,,,
+Budget,Total actual,,,
+Budget,Over/under budget,,,
+Budget,Largest single expense,,,
+Budget,Unexpected costs,,,
+,,,,
+What Worked,1:,,,
+What Worked,2:,,,
+What Worked,3:,,,
+,,,,
+What Broke / Needs Fixing,1:,,,
+What Broke / Needs Fixing,2:,,,
+What Broke / Needs Fixing,3:,,,
+,,,,
+Vendor Performance,Best vendor (name + why),,,
+Vendor Performance,Worst vendor (name + why),,,
+Vendor Performance,Do not rehire,,,
+,,,,
+Key Learnings,1:,,,
+Key Learnings,2:,,,
+Key Learnings,3:,,,
+,,,,
+Next Steps,1:,,,
+Next Steps,2:,,,
+Next Steps,3:,,,
+,,,,
+Partnerships / Leads,Contact 1:,,,"Follow up by [date]"
+Partnerships / Leads,Contact 2:,,,"Follow up by [date]"
+Partnerships / Leads,Contact 3:,,,"Follow up by [date]"`
+},
+'master-checklist': {
+    filename: 'Nancy_Master_Checklist.csv',
+    data: null
+}
+};
+
+function downloadTemplate(key) {
+    const t = templates[key];
+    if (!t) return;
+
+    let csvContent;
+    if (key === 'master-checklist') {
+        const rows = [['Phase','Category','Item','Owner','Deadline','Status','Module','Risk','Notes']];
+        document.querySelectorAll('.phase').forEach(phase => {
+            const phaseTag = phase.querySelector('.phase-tag');
+            if (!phaseTag) return;
+            const phaseName = phaseTag.textContent.trim();
+            phase.querySelectorAll('.category').forEach(cat => {
+                const catH3 = cat.querySelector('h3');
+                if (!catH3) return;
+                const catName = catH3.textContent.trim();
+                const mod = cat.dataset.module || 'Core';
+                cat.querySelectorAll('.checklist li').forEach(li => {
+                    const clone = li.cloneNode(true);
+                    clone.querySelectorAll('.owner, .risk, .note, .note-indicator').forEach(el => el.remove());
+                    const item = clone.textContent.trim();
+                    const ownerEl = li.querySelector('.owner');
+                    const owner = ownerEl ? ownerEl.textContent.trim() : '';
+                    const riskEl = li.querySelector('.risk');
+                    const risk = riskEl ? 'HIGH' : '';
+                    const noteEl = li.querySelector('.note');
+                    const note = noteEl ? noteEl.textContent.trim() : '';
+                    rows.push([phaseName, catName, item, owner, '', 'Not Started', mod === 'Core' ? 'Core' : mod.charAt(0).toUpperCase() + mod.slice(1), risk, note]);
+                });
+            });
+        });
+        csvContent = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+    } else {
+        csvContent = t.data;
+    }
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = t.filename;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>
