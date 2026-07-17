@@ -936,15 +936,18 @@
 </div>
 
 <div class="person-filter-bar">
-    <p>Filter by person &mdash; show only their items.</p>
+    <p>Filter by team or person &mdash; show only their items.</p>
     <div class="person-pills">
         <div class="person-pill active" data-person="all" onclick="togglePersonFilter(this)">All</div>
+        <div class="person-pill" data-person="Creative" onclick="togglePersonFilter(this)" style="border-color:#FF2D8A; color:#FF2D8A;">Creative Team</div>
+        <div class="person-pill" data-person="Ops" onclick="togglePersonFilter(this)" style="border-color:#CCFF00; color:#CCFF00;">Ops Team</div>
+        <div class="person-pill" data-person="Founders" onclick="togglePersonFilter(this)" style="border-color:#6B7280; color:#6B7280;">Founders</div>
         <div class="person-pill" data-person="Crystal" onclick="togglePersonFilter(this)">Crystal</div>
+        <div class="person-pill" data-person="Britt" onclick="togglePersonFilter(this)">Britt</div>
         <div class="person-pill" data-person="Dione" onclick="togglePersonFilter(this)">Dione</div>
         <div class="person-pill" data-person="Andrea" onclick="togglePersonFilter(this)">Andrea</div>
         <div class="person-pill" data-person="Momo" onclick="togglePersonFilter(this)">Momo</div>
         <div class="person-pill" data-person="Rachana" onclick="togglePersonFilter(this)">Rachana</div>
-        <div class="person-pill" data-person="Britt" onclick="togglePersonFilter(this)">Britt</div>
         <div class="person-pill" data-person="Rahul" onclick="togglePersonFilter(this)">Rahul</div>
     </div>
 </div>
@@ -1792,6 +1795,13 @@ function toggleCheck(li) {
 // ========== PERSON FILTER ==========
 let activePersons = new Set();
 
+// Team definitions
+const teams = {
+    'Creative': ['Crystal', 'Britt', 'Dione'],
+    'Ops': ['Andrea', 'Rachana'],
+    'Founders': ['Momo', 'Rahul']
+};
+
 function togglePersonFilter(pill) {
     const person = pill.dataset.person;
 
@@ -1803,12 +1813,39 @@ function togglePersonFilter(pill) {
         // Deactivate "All"
         document.querySelector('.person-pill[data-person="all"]').classList.remove('active');
 
-        if (activePersons.has(person)) {
-            activePersons.delete(person);
-            pill.classList.remove('active');
+        // If it's a team pill, toggle all members
+        if (teams[person]) {
+            if (pill.classList.contains('active')) {
+                teams[person].forEach(m => activePersons.delete(m));
+                pill.classList.remove('active');
+                // Also deactivate individual pills for those members
+                teams[person].forEach(m => {
+                    const mp = document.querySelector('.person-pill[data-person="' + m + '"]');
+                    if (mp) mp.classList.remove('active');
+                });
+            } else {
+                teams[person].forEach(m => activePersons.add(m));
+                pill.classList.add('active');
+                // Also activate individual pills for those members
+                teams[person].forEach(m => {
+                    const mp = document.querySelector('.person-pill[data-person="' + m + '"]');
+                    if (mp) mp.classList.add('active');
+                });
+            }
         } else {
-            activePersons.add(person);
-            pill.classList.add('active');
+            if (activePersons.has(person)) {
+                activePersons.delete(person);
+                pill.classList.remove('active');
+            } else {
+                activePersons.add(person);
+                pill.classList.add('active');
+            }
+            // Sync team pills
+            Object.entries(teams).forEach(([teamName, members]) => {
+                const allActive = members.every(m => activePersons.has(m));
+                const teamPill = document.querySelector('.person-pill[data-person="' + teamName + '"]');
+                if (teamPill) teamPill.classList.toggle('active', allActive);
+            });
         }
 
         // If nothing selected, revert to All
